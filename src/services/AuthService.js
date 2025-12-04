@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const PersonalAccessToken = require('../models/PersonalAccessToken');
+const PersonalAccessToken = require('@/models/PersonalAccessToken');
 
 class AuthService {
   /**

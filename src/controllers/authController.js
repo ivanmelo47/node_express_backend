@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const AuthService = require('../services/AuthService');
+const User = require('@/models/User');
+const AuthService = require('@/services/AuthService');
 
 exports.register = async (req, res) => {
   try {
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Find default role
-    const Role = require('../models/Role');
+    const Role = require('@/models/Role');
     const userRole = await Role.findOne({ where: { name: 'user' } });
     
     if (!userRole) {

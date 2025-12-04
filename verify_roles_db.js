@@ -1,5 +1,6 @@
-const User = require('./src/models/User');
-const Role = require('./src/models/Role');
+require('module-alias/register');
+const User = require('@/models/User');
+const Role = require('@/models/Role');
 // But loading models might require DB connection setup which is async.
 // Let's try to use the API for everything except promotion, which we'll do via a separate internal function if possible, 
 // or just rely on the fact that we can require the models.

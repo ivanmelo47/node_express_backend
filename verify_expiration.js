@@ -1,5 +1,6 @@
+require('module-alias/register');
 const API_URL = 'http://localhost:3000/api';
-const PersonalAccessToken = require('./src/models/PersonalAccessToken');
+const PersonalAccessToken = require('@/models/PersonalAccessToken');
 
 async function verifyExpiration() {
   try {

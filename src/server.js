@@ -1,6 +1,11 @@
+const moduleAlias = require('module-alias');
+const path = require('path');
+moduleAlias.addAlias('@', __dirname);
+
+require('dotenv').config();
+
 const app = require('./app');
 const sequelize = require('./config/database');
-require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 
