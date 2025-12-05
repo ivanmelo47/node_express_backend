@@ -1,5 +1,7 @@
 const User = require('@/models/User');
 const Role = require('@/models/Role');
+const fs = require('fs');
+const path = require('path');
 
 class UserService {
   /**
@@ -43,6 +45,23 @@ class UserService {
   static async updateUser(id, data) {
     const user = await User.findByPk(id);
     if (!user) return null;
+
+    // Check if image is being updated
+    if (data.image && user.image) {
+      // Construct path to old image
+      // Assuming images are stored in public/uploads/profiles
+      // We might need a config or constant for this path to avoid hardcoding duplication
+      // For now, using the known path
+      const oldImagePath = path.join(__dirname, '../../public/uploads/profiles', user.image);
+      
+      if (fs.existsSync(oldImagePath)) {
+        try {
+          fs.unlinkSync(oldImagePath);
+        } catch (err) {
+          console.error('Failed to delete old image:', err);
+        }
+      }
+    }
 
     await user.update(data);
     return user;

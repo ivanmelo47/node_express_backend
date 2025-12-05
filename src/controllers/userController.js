@@ -43,8 +43,19 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
+const createUploadMiddleware = require('@/middlewares/uploadMiddleware');
+const upload = createUploadMiddleware('public/uploads/profiles');
+
 exports.updateUser = async (req, res, next) => {
   try {
+    // Manually handle upload
+    await new Promise((resolve, reject) => {
+      upload.single('image')(req, res, (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+
     const updateData = { ...req.body };
     
     // If image was uploaded, add it to update data
