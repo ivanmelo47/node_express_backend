@@ -45,7 +45,14 @@ exports.getUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const user = await UserService.updateUser(req.params.id, req.body);
+    const updateData = { ...req.body };
+    
+    // If image was uploaded, add it to update data
+    if (req.file) {
+      updateData.image = req.file.filename;
+    }
+
+    const user = await UserService.updateUser(req.params.id, updateData);
     if (!user) {
       return res.errorResponse('User not found', 404);
     }

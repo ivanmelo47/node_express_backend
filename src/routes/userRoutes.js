@@ -5,6 +5,7 @@ const authMiddleware = require('@/middlewares/authMiddleware');
 
 const roleMiddleware = require('@/middlewares/roleMiddleware');
 const abilityMiddleware = require('@/middlewares/abilityMiddleware');
+const upload = require('@/middlewares/uploadMiddleware');
 
 // Public or Authenticated routes (depending on requirements, here keeping them authenticated)
 router.get('/', authMiddleware, abilityMiddleware('user:read'), userController.getUsers);
@@ -12,7 +13,7 @@ router.get('/:id', authMiddleware, abilityMiddleware('user:read'), userControlle
 
 // Admin only routes (also checking for specific abilities for granularity)
 router.post('/', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:create'), userController.createUser);
-router.put('/:id', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:update'), userController.updateUser);
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:update'), upload.single('image'), userController.updateUser);
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:delete'), userController.deleteUser);
 
 module.exports = router;

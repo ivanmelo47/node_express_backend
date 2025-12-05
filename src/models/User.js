@@ -22,6 +22,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  image: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   // role: { ... } // Removed in favor of roleId association
 }, {
   timestamps: true,

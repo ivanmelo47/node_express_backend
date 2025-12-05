@@ -5,8 +5,8 @@ const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const errorHandler = require('./middlewares/errorHandler');
-
 const responseMiddleware = require('./middlewares/responseMiddleware');
+const path = require('path');
 
 const app = express();
 
@@ -16,7 +16,10 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(responseMiddleware); // Add response helper methods
+app.use(responseMiddleware);
+
+// Serve static files
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Routes
 app.get('/', (req, res) => {
