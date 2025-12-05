@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
-const errorHandler = require('./middlewares/errorHandler');
+const errorHandler = require('./handlers/errorHandler');
 const responseMiddleware = require('./middlewares/responseMiddleware');
 const path = require('path');
 

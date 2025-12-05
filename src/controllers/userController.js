@@ -1,4 +1,5 @@
 const UserService = require('@/services/UserService');
+const { handleSingleUpload } = require('@/helpers/uploadHelper');
 
 exports.createUser = async (req, res, next) => {
   try {
@@ -43,18 +44,12 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-const createUploadMiddleware = require('@/middlewares/uploadMiddleware');
-const upload = createUploadMiddleware('public/uploads/profiles');
+
 
 exports.updateUser = async (req, res, next) => {
   try {
-    // Manually handle upload
-    await new Promise((resolve, reject) => {
-      upload.single('image')(req, res, (err) => {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
+    // Handle upload using helper
+    await handleSingleUpload('public/uploads/profiles', 'image', req, res);
 
     const updateData = { ...req.body };
     

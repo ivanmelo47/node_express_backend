@@ -35,4 +35,32 @@ const createUploadMiddleware = (uploadPath) => {
   });
 };
 
-module.exports = createUploadMiddleware;
+/**
+ * Handles a single file upload.
+ * Can accept either an existing multer instance or a destination path string.
+ * Wraps the multer middleware in a Promise.
+ * 
+ * @param {Object|string} uploadOrPath - The multer instance OR a destination path string.
+ * @param {string} fieldName - The name of the field in the form-data.
+ * @param {Object} req - The express request object.
+ * @param {Object} res - The express response object.
+ * @returns {Promise<void>}
+ */
+const handleSingleUpload = (uploadOrPath, fieldName, req, res) => {
+  let upload = uploadOrPath;
+
+  if (typeof uploadOrPath === 'string') {
+    upload = createUploadMiddleware(uploadOrPath);
+  }
+
+  return new Promise((resolve, reject) => {
+    upload.single(fieldName)(req, res, (err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
+};
+
+module.exports = {
+  handleSingleUpload
+};
