@@ -1,6 +1,10 @@
 const { Sequelize } = require("sequelize");
 const path = require("path");
+const moment = require('moment-timezone');
 require("dotenv").config();
+
+const timezone = process.env.APP_TIMEZONE || 'UTC';
+const offset = moment.tz(timezone).format('Z');
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -11,6 +15,10 @@ const sequelize = new Sequelize(
     dialect: 'mariadb',
     port: process.env.DB_PORT,
     logging: false,
+    timezone: offset,
+    dialectOptions: {
+      timezone: offset
+    }
   }
 );
 

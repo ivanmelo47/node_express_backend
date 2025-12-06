@@ -1,4 +1,7 @@
 require('dotenv').config();
+const moment = require('moment-timezone');
+const timezone = process.env.APP_TIMEZONE || 'UTC';
+const offset = moment.tz(timezone).format('Z');
 
 module.exports = {
   development: {
@@ -8,7 +11,11 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'mariadb',
-    logging: false
+    logging: false,
+    timezone: offset,
+    dialectOptions: {
+      timezone: offset
+    }
   },
   test: {
     dialect: 'sqlite',
@@ -22,6 +29,10 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'mariadb',
-    logging: false
+    logging: false,
+    timezone: offset,
+    dialectOptions: {
+      timezone: offset
+    }
   }
 };

@@ -1,4 +1,5 @@
 const UserService = require('@/services/UserService');
+const UserResource = require('@/resources/UserResource');
 const { handleSingleUpload } = require('@/helpers/uploadHelper');
 
 exports.createUser = async (req, res, next) => {
@@ -17,7 +18,7 @@ exports.createUser = async (req, res, next) => {
     // But I should probably ensure password is handled if it's in body.
     
     const user = await UserService.createUser(req.body);
-    res.successResponse(user, 'User created successfully', 201);
+    res.successResponse(new UserResource(user).resolve(), 'User created successfully', 201);
   } catch (error) {
     next(error);
   }
@@ -26,7 +27,7 @@ exports.createUser = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await UserService.getAllUsers();
-    res.successResponse(users, 'Users retrieved successfully');
+    res.successResponse(UserResource.collection(users), 'Users retrieved successfully');
   } catch (error) {
     next(error);
   }
@@ -38,7 +39,7 @@ exports.getUserById = async (req, res, next) => {
     if (!user) {
       return res.errorResponse('User not found', 404);
     }
-    res.successResponse(user, 'User retrieved successfully');
+    res.successResponse(new UserResource(user).resolve(), 'User retrieved successfully');
   } catch (error) {
     next(error);
   }
@@ -62,7 +63,7 @@ exports.updateUser = async (req, res, next) => {
     if (!user) {
       return res.errorResponse('User not found', 404);
     }
-    res.successResponse(user, 'User updated successfully');
+    res.successResponse(new UserResource(user).resolve(), 'User updated successfully');
   } catch (error) {
     next(error);
   }
