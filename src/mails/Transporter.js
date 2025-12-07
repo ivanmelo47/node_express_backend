@@ -2,9 +2,13 @@ const nodemailer = require('nodemailer');
 
 class Transporter {
   constructor() {
+    const encryption = process.env.MAIL_ENCRYPTION;
+    
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
+      secure: encryption === 'ssl', 
+      requireTLS: encryption === 'tls',
       auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD
