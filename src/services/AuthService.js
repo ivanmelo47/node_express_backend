@@ -110,6 +110,27 @@ class AuthService {
   }
 
   /**
+   * Confirm a user account.
+   * @param {string} token 
+   * @returns {Object} user
+   */
+  static async confirmAccount(token) {
+    const user = await User.findOne({ where: { confirmationToken: token } });
+
+    if (!user) {
+        const error = new Error('Invalid or expired confirmation token');
+        error.statusCode = 404; // Not Found
+        throw error;
+    }
+
+    user.confirmed = true;
+    user.confirmationToken = null; // Clear token after use
+    await user.save();
+
+    return user;
+  }
+
+  /**
    * Generate a new personal access token for a user.
    * @param {Object} user - The user instance.
    * @param {string} name - The name of the token (optional, not stored in DB currently but good for future).

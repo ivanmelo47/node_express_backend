@@ -72,3 +72,22 @@ exports.login = async (req, res) => {
     res.errorResponse(statusCode === 500 ? 'Internal Server Error' : error.message, statusCode, error.statusCode ? null : error.message);
   }
 };
+
+exports.confirmAccount = async (req, res) => {
+  try {
+    await validate(req, authRules.confirmAccountRules);
+
+    const { token } = req.body;
+    await AuthService.confirmAccount(token);
+
+    res.successResponse(null, 'Account confirmed successfully');
+
+  } catch (error) {
+    console.error('Confirmation Error:', error);
+    const statusCode = error.statusCode || 500;
+     if (statusCode === 422 && error.data) {
+        return res.errorResponse(error.message, statusCode, error.data);
+    }
+    res.errorResponse(statusCode === 500 ? 'Internal Server Error' : error.message, statusCode, error.statusCode ? null : error.message);
+  }
+};

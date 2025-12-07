@@ -17,7 +17,13 @@ const loginRules = [
         .notEmpty().withMessage('Password is required')
 ];
 
+const confirmAccountRules = [
+    body('token')
+        .notEmpty().withMessage('Token is required')
+];
+
 module.exports = {
     registerRules,
-    loginRules
+    loginRules,
+    confirmAccountRules
 };
