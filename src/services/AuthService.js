@@ -1,7 +1,114 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const PersonalAccessToken = require('@/models/PersonalAccessToken');
+const User = require('@/models/User');
+const Role = require('@/models/Role');
+const Transporter = require('@/mails/Transporter');
+const ConfirmationMail = require('@/mails/ConfirmationMail');
 
 class AuthService {
+
+  /**
+   * Register a new user.
+   * @param {Object} data - { name, email, password }
+   * @returns {Object} - { user, confirmationToken }
+   */
+  static async register(data) {
+    const { name, email, password } = data;
+
+    // Check if user exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+        const error = new Error('Email already in use');
+        error.statusCode = 400; // Using statusCode property for cleaner controller handling if desired
+        throw error;
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Find default role
+    const userRole = await Role.findOne({ where: { name: 'user' } });
+    if (!userRole) {
+         throw new Error('Default role not found');
+    }
+
+    // Generate confirmation token
+    const confirmationToken = crypto.randomBytes(32).toString('hex');
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      roleId: userRole.id,
+      confirmed: false,
+      confirmationToken: confirmationToken,
+      status: true
+    });
+
+    // Send confirmation email
+    await Transporter.send(new ConfirmationMail(user, confirmationToken));
+
+    return { user, confirmationToken };
+  }
+
+  /**
+   * Login a user.
+   * @param {string} email 
+   * @param {string} password 
+   * @returns {Object} - { user, token, roleName }
+   */
+  static async login(email, password) {
+    // Find user with Role
+    const user = await User.findOne({ 
+      where: { email },
+      include: ['Role']
+    });
+    
+    if (!user) {
+      const error = new Error('Invalid credentials');
+      error.statusCode = 401;
+      throw error;
+    }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      const error = new Error('Invalid credentials');
+      error.statusCode = 401;
+      throw error;
+    }
+
+    // Check status and confirmation
+    if (!user.status) {
+        const error = new Error('Account is disabled. Please contact support.');
+        error.statusCode = 403;
+        throw error;
+    }
+
+    if (!user.confirmed) {
+        const error = new Error('Please confirm your email address before logging in.');
+        error.statusCode = 403;
+        throw error;
+    }
+
+    // Define abilities based on role
+    let abilities = ['user:read']; 
+    const roleName = user.Role ? user.Role.name : 'user';
+
+    if (roleName === 'admin') {
+      abilities = ['*']; 
+    } else if (roleName === 'user') {
+      abilities = ['user:read', 'user:update'];
+    }
+
+    // Generate token
+    const token = await AuthService.createToken(user, abilities);
+
+    return { user, token, roleName };
+  }
+
   /**
    * Generate a new personal access token for a user.
    * @param {Object} user - The user instance.

@@ -1,111 +1,74 @@
-const bcrypt = require('bcryptjs');
-const User = require('@/models/User');
 const AuthService = require('@/services/AuthService');
+const { validationResult } = require('express-validator');
+const authRules = require('@/rules/authRules');
+
+// Helper to run validations imperatively
+const validate = async (req, rules) => {
+    await Promise.all(rules.map(validation => validation.run(req)));
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error('Validation Failed');
+        error.statusCode = 422;
+        error.data = errors.array();
+        throw error; // Let the catch block handle response
+    }
+};
 
 exports.register = async (req, res) => {
   try {
+    // Run validation rules from src/rules/authRules.js
+    await validate(req, authRules.registerRules);
+
     const { name, email, password } = req.body;
 
-    // Basic validation
-    if (!name || !email || !password) {
-      return res.errorResponse('Name, email, and password are required', 400);
-    }
+    const { user, confirmationToken } = await AuthService.register({ name, email, password });
 
-    // Check if user exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.errorResponse('Email already in use', 400);
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Find default role
-    const Role = require('@/models/Role');
-    const userRole = await Role.findOne({ where: { name: 'user' } });
-    
-    if (!userRole) {
-      return res.errorResponse('Default role not found', 500);
-    }
-
-    // Create user
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      roleId: userRole.id
-    });
-
-    // Define abilities based on role (simplified logic)
-    // In a real app, this might come from a config or policy
-    const abilities = ['user:read', 'user:update']; 
-
-    // Generate token
-    const token = await AuthService.createToken(user, abilities);
+    // TODO: Send email with confirmationToken here
+    console.log(`[Mock Email] Confirmation Token for ${email}: ${confirmationToken}`);
 
     res.successResponse({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
-      token,
+      message: 'Registration successful. Please check your email to confirm your account.',
+      // Returning token temporarily for ease of testing without email service
+      mockConfirmationToken: confirmationToken 
     }, 'User registered successfully', 201);
+
   } catch (error) {
     console.error('Register Error:', error);
-    res.errorResponse('Internal Server Error', 500, error.message);
+    const statusCode = error.statusCode || 500;
+    // Check if it's a validation error with data
+    if (statusCode === 422 && error.data) {
+        return res.errorResponse(error.message, statusCode, error.data);
+    }
+    res.errorResponse(statusCode === 500 ? 'Internal Server Error' : error.message, statusCode, error.statusCode ? null : error.message);
   }
 };
 
 exports.login = async (req, res) => {
   try {
+    // Run validation rules
+    await validate(req, authRules.loginRules);
+
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.errorResponse('Email and password are required', 400);
-    }
-
-    // Find user with Role
-    const user = await User.findOne({ 
-      where: { email },
-      include: ['Role']
-    });
-    
-    if (!user) {
-      return res.errorResponse('Invalid credentials', 401);
-    }
-
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.errorResponse('Invalid credentials', 401);
-    }
-
-    // Define abilities based on role
-    let abilities = ['user:read']; // Default minimal access
-    
-    // Check if role exists before accessing name
-    const roleName = user.Role ? user.Role.name : 'user';
-
-    if (roleName === 'admin') {
-      abilities = ['*']; // Super admin
-    } else if (roleName === 'user') {
-      abilities = ['user:read', 'user:update'];
-    }
-
-    // Generate token
-    const token = await AuthService.createToken(user, abilities);
+    const { user, token, roleName } = await AuthService.login(email, password);
 
     res.successResponse({
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: roleName
       },
       token,
     }, 'Login successful');
+
   } catch (error) {
     console.error('Login Error:', error);
-    res.errorResponse('Internal Server Error', 500, error.message);
+    const statusCode = error.statusCode || 500;
+     if (statusCode === 422 && error.data) {
+        return res.errorResponse(error.message, statusCode, error.data);
+    }
+    res.errorResponse(statusCode === 500 ? 'Internal Server Error' : error.message, statusCode, error.statusCode ? null : error.message);
   }
 };

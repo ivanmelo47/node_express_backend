@@ -26,6 +26,18 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  confirmed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  confirmationToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
   // role: { ... } // Removed in favor of roleId association
 }, {
   timestamps: true,
