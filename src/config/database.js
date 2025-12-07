@@ -12,7 +12,8 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: 'mariadb',
+    //dialect: 'mysql',
+    dialect: 'mariadb', 
     port: process.env.DB_PORT,
     logging: false,
     timezone: offset,

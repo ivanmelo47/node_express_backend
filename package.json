@@ -13,7 +13,8 @@
     "migrate:undo": "sequelize-cli db:migrate:undo",
     "make:migration": "sequelize-cli migration:generate --name",
     "seed": "sequelize-cli db:seed:all",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "verify": "node verification_scripts/verify_all.js"
   },
   "keywords": [],
   "author": "",

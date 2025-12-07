@@ -19,6 +19,8 @@ async function verifySanitization() {
             name: maliciousName,
             email: `xss_test_${TIMESTAMP}@example.com`,
             password: 'password123'
+        }, {
+            headers: { 'X-Forwarded-For': '10.0.0.5' } // Spoof IP to avoid conflicting with previous rate limit tests
         });
 
         console.log('Response Data:', JSON.stringify(res.data, null, 2));
@@ -57,6 +59,8 @@ async function verifyRateLimit() {
             await axios.post(`${API_URL}/auth/login`, {
                 email: email,
                 password: 'wrong_password'
+            }, {
+                headers: { 'X-Forwarded-For': '10.0.0.6' } // Spoof IP to isolate this test's rate limit counting
             });
             process.stdout.write('.');
         } catch (error) {

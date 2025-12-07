@@ -17,7 +17,7 @@ async function verifyConfirmation() {
             name: 'Confirmation Tester',
             email: TEST_EMAIL,
             password: TEST_PASSWORD
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.1' } }); // Spoof IP
         
         if (res.status === 201) {
             console.log('SUCCESS: Registration API returned 201.');
@@ -40,7 +40,7 @@ async function verifyConfirmation() {
         await axios.post(`${API_URL}/login`, {
             email: TEST_EMAIL,
             password: TEST_PASSWORD
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.1' } });
         console.error('FAILURE: Login succeeded but should have failed (unconfirmed)!');
         process.exit(1);
     } catch (err) {
@@ -58,7 +58,7 @@ async function verifyConfirmation() {
         console.log('\n3. Confirming Account...');
         const res = await axios.post(`${API_URL}/confirm-account`, {
             token: token
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.1' } });
         if (res.status === 200) {
             console.log('SUCCESS: Account confirmation returned 200.');
         }
@@ -74,7 +74,7 @@ async function verifyConfirmation() {
         const res = await axios.post(`${API_URL}/login`, {
             email: TEST_EMAIL,
             password: TEST_PASSWORD
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.1' } });
         if (res.status === 200) {
             console.log('SUCCESS: Login succeeded.');
         }
@@ -89,7 +89,7 @@ async function verifyConfirmation() {
         console.log('\n5. Testing Double Confirmation (Expect Failure)...');
         await axios.post(`${API_URL}/confirm-account`, {
             token: token
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.1' } });
         console.error('FAILURE: Double confirmation succeeded but should fail!');
         process.exit(1);
     } catch (err) {

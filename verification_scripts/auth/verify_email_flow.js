@@ -13,7 +13,7 @@ async function verifyEmailFlow() {
             name: 'Structure Tester',
             email: TEST_EMAIL,
             password: 'password123'
-        });
+        }, { headers: { 'X-Forwarded-For': '10.0.1.2' } }); // Spoof IP
 
         if (res.status === 201) {
             console.log('SUCCESS: Registration API returned 201.');
