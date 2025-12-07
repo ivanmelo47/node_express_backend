@@ -29,6 +29,7 @@ const User = sequelize.define('User', {
   // role: { ... } // Removed in favor of roleId association
 }, {
   timestamps: true,
+  paranoid: true, // Enable soft deletes
 });
 
 // Define associations

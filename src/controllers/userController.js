@@ -1,24 +1,10 @@
 const UserService = require('@/services/UserService');
 const UserResource = require('@/resources/UserResource');
-const { handleSingleUpload } = require('@/helpers/uploadHelper');
 
 exports.createUser = async (req, res, next) => {
   try {
-    // Note: Password hashing should ideally be in Service or Model hook.
-    // For now, assuming it's handled or we might need to move it here if not already.
-    // Wait, the previous controller didn't hash password! It just took req.body.
-    // The authController.register DOES hash. 
-    // This createUser is for Admin creating users. It SHOULD hash.
-    // Let's add hashing here or in Service. Service is better but let's stick to controller for now to match previous behavior + fix.
-    // Actually, previous code: const user = await User.create({ name, email, role });
-    // It missed password! And didn't hash.
-    // Let's fix this: Admin creating user needs password.
-    
-    // For this refactor, I will just delegate to Service.
-    // But I should probably ensure password is handled if it's in body.
-    
     const user = await UserService.createUser(req.body);
-    res.successResponse(new UserResource(user).resolve(), 'User created successfully', 201);
+    res.successResponse(new UserResource(user).resolve(), 'Usuario creado exitosamente', 201);
   } catch (error) {
     next(error);
   }
@@ -27,7 +13,7 @@ exports.createUser = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await UserService.getAllUsers();
-    res.successResponse(UserResource.collection(users), 'Users retrieved successfully');
+    res.successResponse(UserResource.collection(users), 'Usuarios recuperados exitosamente');
   } catch (error) {
     next(error);
   }
@@ -37,33 +23,23 @@ exports.getUserById = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id);
     if (!user) {
-      return res.errorResponse('User not found', 404);
+      return res.errorResponse('Usuario no encontrado', 404);
     }
-    res.successResponse(new UserResource(user).resolve(), 'User retrieved successfully');
+    res.successResponse(new UserResource(user).resolve(), 'Usuario recuperado exitosamente');
   } catch (error) {
     next(error);
   }
 };
 
-
-
 exports.updateUser = async (req, res, next) => {
   try {
-    // Handle upload using helper
-    await handleSingleUpload('public/uploads/profiles', 'image', req, res);
-
-    const updateData = { ...req.body };
+    // Delegar toda la lógica de subida y actualización al servicio
+    const user = await UserService.updateUser(req.params.id, req, res);
     
-    // If image was uploaded, add it to update data
-    if (req.file) {
-      updateData.image = req.file.filename;
-    }
-
-    const user = await UserService.updateUser(req.params.id, updateData);
     if (!user) {
-      return res.errorResponse('User not found', 404);
+      return res.errorResponse('Usuario no encontrado', 404);
     }
-    res.successResponse(new UserResource(user).resolve(), 'User updated successfully');
+    res.successResponse(new UserResource(user).resolve(), 'Usuario actualizado exitosamente');
   } catch (error) {
     next(error);
   }
@@ -73,9 +49,9 @@ exports.deleteUser = async (req, res, next) => {
   try {
     const success = await UserService.deleteUser(req.params.id);
     if (!success) {
-      return res.errorResponse('User not found', 404);
+      return res.errorResponse('Usuario no encontrado', 404);
     }
-    res.successResponse(null, 'User deleted successfully', 200);
+    res.successResponse(null, 'Usuario eliminado exitosamente', 200);
   } catch (error) {
     next(error);
   }

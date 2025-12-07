@@ -22,4 +22,34 @@ const sequelize = new Sequelize(
   }
 );
 
+// -------------------------------------------------------------------------
+// Métodos auxiliares para transacciones (estilo Laravel)
+// -------------------------------------------------------------------------
+
+/**
+ * Inicia una nueva transacción de base de datos.
+ * @returns {Promise<Transaction>} - Objeto de transacción de Sequelize.
+ */
+sequelize.init = async function() {
+  return await this.transaction();
+};
+
+/**
+ * Confirma (commit) una transacción activa.
+ * @param {Transaction} t - La transacción a confirmar.
+ * @returns {Promise<void>}
+ */
+sequelize.commit = async function(t) {
+  if (t) await t.commit();
+};
+
+/**
+ * Revierta (rollback) una transacción activa.
+ * @param {Transaction} t - La transacción a revertir.
+ * @returns {Promise<void>}
+ */
+sequelize.rollback = async function(t) {
+  if (t) await t.rollback();
+};
+
 module.exports = sequelize;
