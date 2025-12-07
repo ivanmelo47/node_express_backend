@@ -54,8 +54,8 @@ async function verifyRoles() {
     // However, we need to wait for connection.
     
     // Dynamic import to avoid top-level await issues if not supported, though Node 22 supports it.
-    const User = require('./src/models/User');
-    const Role = require('./src/models/Role');
+    const User = require('../../src/models/User');
+    const Role = require('../../src/models/Role');
     
     const adminRole = await Role.findOne({ where: { name: 'admin' } });
     const userToPromote = await User.findOne({ where: { email: adminEmail } });

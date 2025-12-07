@@ -2,10 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 const axios = require('axios');
-require('module-alias/register');
+const moduleAlias = require('module-alias');
+moduleAlias.addAlias('@', path.join(__dirname, '../../src'));
 
 const API_URL = 'http://localhost:4000/api';
-const UPLOAD_DIR = path.join(__dirname, 'public/uploads/profiles');
+const UPLOAD_DIR = path.join(__dirname, '../../public/uploads/profiles');
 
 async function verifyImageReplacement() {
   try {

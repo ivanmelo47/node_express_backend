@@ -1,4 +1,4 @@
-const sequelize = require('./src/config/database');
+const sequelize = require('../src/config/database');
 const moment = require('moment-timezone');
 require('dotenv').config();
 

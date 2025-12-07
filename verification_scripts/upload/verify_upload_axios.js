@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 const axios = require('axios');
-require('module-alias/register');
+// require('module-alias/register'); // Might fail in subfolder if package.json not found?
+const moduleAlias = require('module-alias');
+moduleAlias.addAlias('@', path.join(__dirname, '../../src'));
 
 const API_URL = 'http://localhost:4000/api';
 
@@ -22,8 +24,10 @@ async function verifyImageUpload() {
     const User = require('@/models/User');
     const adminRole = await Role.findOne({ where: { name: 'admin' } });
     const adminUser = await User.findOne({ where: { email: adminEmail } });
-    if (adminUser && adminRole) {
-        adminUser.roleId = adminRole.id;
+    if (adminUser) {
+        if (adminRole) adminUser.roleId = adminRole.id;
+        adminUser.confirmed = true;
+        adminUser.status = true; // Ensure active status
         await adminUser.save();
     }
     
@@ -34,9 +38,16 @@ async function verifyImageUpload() {
     });
     const newAdminToken = loginRes.data.data.token;
 
+    const sharp = require('sharp');
     console.log('\n--- Uploading Image ---');
     const imagePath = path.join(__dirname, 'test_image.jpg');
-    fs.writeFileSync(imagePath, 'dummy image content');
+    
+    // Create valid 1x1 pixel image
+    await sharp({
+        create: { width: 1, height: 1, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 1 } }
+    })
+    .jpeg()
+    .toFile(imagePath);
 
     const formData = new FormData();
     formData.append('name', 'Updated Name');

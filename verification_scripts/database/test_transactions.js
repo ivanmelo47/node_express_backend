@@ -11,7 +11,7 @@ const db = require('@/config/database');
 // Or we can just use relative paths for simplicity in this temp script if alias fails.
 // But let's try to assume alias works or register it manually.
 const moduleAlias = require('module-alias');
-moduleAlias.addAlias('@', path.join(__dirname, 'src'));
+moduleAlias.addAlias('@', path.join(__dirname, '../../src'));
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -62,7 +62,7 @@ async function runTests() {
 
     // Create dummy image for our main user
     const dummyImageName = `test_img_${timestamp}.txt`;
-    const dummyImagePath = path.join(__dirname, 'public/uploads/profiles', dummyImageName);
+    const dummyImagePath = path.join(__dirname, '../../public/uploads/profiles', dummyImageName);
     const uploadsDir = path.dirname(dummyImagePath);
     if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
     fs.writeFileSync(dummyImagePath, 'dummy content');

@@ -8,11 +8,12 @@ const sharp = require('sharp');
 const db = require('@/config/database');
 
 const moduleAlias = require('module-alias');
-moduleAlias.addAlias('@', path.join(__dirname, 'src'));
+// Since this is in a subdirectory, pointing @ to ../../src
+moduleAlias.addAlias('@', path.join(__dirname, '../../src'));
 
 async function verifyDbColumn() {
     console.log('--- Verifying DB Image Column Format ---');
-    const uploadPath = path.join(__dirname, 'public/uploads/profiles');
+    const uploadPath = path.join(__dirname, '../../public/uploads/profiles');
 
     // 1. Create dummy buffer
     const buffer = await sharp({
