@@ -10,15 +10,58 @@ Este documento proporciona detalles sobre cómo utilizar las APIs de Gestión de
 
 Todas las APIs de Usuario requieren un Token Bearer. Primero debes iniciar sesión para obtener este token.
 
-### 1. Iniciar Sesión (Obtener Token)
+### 1. Registro Público (Nuevo Usuario)
+
+Crea una cuenta nueva. El usuario se creará como **no confirmado**. Se enviará un correo electrónico con un token de confirmación.
 
 - **Método:** `POST`
-- **URL:** `/auth/login`
+- **URL:** `/auth/register`
 - **Cuerpo (JSON):**
   ```json
   {
-    "email": "admin@example.com",
-    "password": "tu_contraseña"
+    "name": "Juan Perez",
+    "email": "juan@example.com",
+    "password": "securePassword123"
+  }
+  ```
+- **Respuesta:**
+  ```json
+  {
+    "success": true,
+    "message": "Registration successful. Please check your email to confirm your account."
+  }
+  ```
+
+### 2. Confirmar Cuenta
+
+Activa la cuenta del usuario utilizando el token recibido por correo electrónico.
+
+- **Método:** `POST`
+- **URL:** `/auth/confirm-account`
+- **Cuerpo (JSON):**
+  ```json
+  {
+    "token": "token_recibido_por_email"
+  }
+  ```
+- **Respuesta:**
+  ```json
+  {
+    "success": true,
+    "message": "Account confirmed successfully"
+  }
+  ```
+
+### 3. Iniciar Sesión (Obtener Token)
+
+- **Método:** `POST`
+- **URL:** `/auth/login`
+- **Requisitos:** La cuenta debe estar confirmada (`confirmed: true`) y activa (`status: true`).
+- **Cuerpo (JSON):**
+  ```json
+  {
+    "email": "juan@example.com",
+    "password": "securePassword123"
   }
   ```
 - **Respuesta:** Copia el `token` de la respuesta `data`.
