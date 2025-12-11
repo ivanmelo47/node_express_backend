@@ -1,4 +1,4 @@
-import BaseResource from './BaseResource';
+import BaseResource from '@/common/resources/BaseResource';
 import RoleResource from './RoleResource';
 
 class UserResource extends BaseResource {

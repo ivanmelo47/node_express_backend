@@ -3,12 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import hpp from 'hpp';
-import { globalLimiter } from './middlewares/rateLimiter';
-import authRoutes from './routes/authRoutes';
-import userRoutes from './routes/userRoutes';
-import errorHandler from './handlers/errorHandler';
+import { globalLimiter } from './common/middlewares/rateLimiter';
+import authRoutes from './modules/auth/routes/authRoutes';
+import userRoutes from './modules/users/routes/userRoutes';
+import errorHandler from './common/handlers/errorHandler';
 // @ts-ignore
-import responseMiddleware from './middlewares/responseMiddleware';
+import responseMiddleware from './common/middlewares/responseMiddleware';
 import path from 'path';
 
 const app = express();

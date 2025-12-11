@@ -1,5 +1,5 @@
-import UserService from '@/services/UserService';
-import UserResource from '@/resources/UserResource';
+import UserService from '@/modules/users/services/UserService';
+import UserResource from '@/modules/users/resources/UserResource';
 import { Request, NextFunction } from 'express';
 
 export const createUser = async (req: Request, res: any, next: NextFunction) => {

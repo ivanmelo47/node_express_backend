@@ -43,7 +43,7 @@ const PersonalAccessToken = sequelize.define('PersonalAccessToken', {
     },
   },
 }, {
-  tableName: 'PersonalAccessTokens',
+  tableName: 'auth_personal_access_tokens',
   timestamps: true,
 });
 

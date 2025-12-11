@@ -1,4 +1,4 @@
-import AuthService from '@/services/AuthService';
+import AuthService from '@/modules/auth/services/AuthService';
 import { Request, Response, NextFunction } from 'express';
 
 const authMiddleware = async (req: any, res: any, next: NextFunction) => {

@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 // @ts-ignore
 import sequelize from '@/config/database';
 import Role from './Role';
-import PersonalAccessToken from './PersonalAccessToken';
+import PersonalAccessToken from '@/modules/auth/models/PersonalAccessToken';
 
 const User = sequelize.define('User', {
   id: {
@@ -41,6 +41,7 @@ const User = sequelize.define('User', {
   },
   // role: { ... } // Removed in favor of roleId association
 }, {
+  tableName: 'users_users',
   timestamps: true,
   paranoid: true, // Enable soft deletes
 });

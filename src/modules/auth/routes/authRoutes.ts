@@ -1,7 +1,7 @@
 import express from 'express';
 // @ts-ignore
-import * as authController from '@/controllers/authController';
-import { authLimiter } from '@/middlewares/rateLimiter';
+import * as authController from '@/modules/auth/controllers/authController';
+import { authLimiter } from '@/common/middlewares/rateLimiter';
 
 const router = express.Router();
 

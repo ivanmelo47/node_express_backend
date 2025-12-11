@@ -1,4 +1,4 @@
-import BaseResource from './BaseResource';
+import BaseResource from '@/common/resources/BaseResource';
 
 class RoleResource extends BaseResource {
   toArray() {

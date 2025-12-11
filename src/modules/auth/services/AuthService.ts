@@ -1,10 +1,10 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import PersonalAccessToken from '@/models/PersonalAccessToken';
-import User from '@/models/User';
-import Role from '@/models/Role';
-import Transporter from '@/mails/Transporter';
-import ConfirmationMail from '@/mails/ConfirmationMail';
+import PersonalAccessToken from '@/modules/auth/models/PersonalAccessToken';
+import User from '@/modules/users/models/User';
+import Role from '@/modules/users/models/Role';
+import Transporter from '@/common/mails/Transporter';
+import ConfirmationMail from '@/common/mails/ConfirmationMail';
 
 class AuthService {
 

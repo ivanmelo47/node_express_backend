@@ -1,9 +1,9 @@
 import express from 'express';
 // @ts-ignore
-import * as userController from '@/controllers/userController';
-import authMiddleware from '@/middlewares/authMiddleware';
-import roleMiddleware from '@/middlewares/roleMiddleware';
-import abilityMiddleware from '@/middlewares/abilityMiddleware';
+import * as userController from '@/modules/users/controllers/userController';
+import authMiddleware from '@/modules/auth/middlewares/authMiddleware';
+import roleMiddleware from '@/common/middlewares/roleMiddleware';
+import abilityMiddleware from '@/common/middlewares/abilityMiddleware';
 
 const router = express.Router();
 

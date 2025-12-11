@@ -1,4 +1,4 @@
-import AuthService from '@/services/AuthService';
+import AuthService from '@/modules/auth/services/AuthService';
 import { validationResult } from 'express-validator';
 import * as authRules from '@/rules/authRules';
 import { Request, Response } from 'express';
