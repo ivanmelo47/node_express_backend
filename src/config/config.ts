@@ -1,10 +1,8 @@
-import dotenv from 'dotenv';
-import moment from 'moment-timezone';
-
-dotenv.config();
+require('dotenv').config();
+const momentTz = require('moment-timezone');
 
 const timezone = process.env.APP_TIMEZONE || 'UTC';
-const offset = moment.tz(timezone).format('Z');
+const offset = momentTz.tz(timezone).format('Z');
 
 module.exports = {
   development: {
