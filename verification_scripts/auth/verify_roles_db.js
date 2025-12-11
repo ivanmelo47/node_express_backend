@@ -7,7 +7,7 @@ const Role = require('@/models/Role');
 
 // Actually, requiring models directly in a script that runs via `node` should work if we handle the async connection.
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:4000/api';
 
 async function verifyRoles() {
   try {
