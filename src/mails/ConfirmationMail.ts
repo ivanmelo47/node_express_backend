@@ -1,7 +1,12 @@
-const BaseHtml = require('./BaseHtml');
+import BaseHtml from './BaseHtml';
 
 class ConfirmationMail {
-  constructor(user, token) {
+  to: string;
+  subject: string;
+  user: any;
+  token: string;
+
+  constructor(user: any, token: string) {
     this.to = user.email;
     this.subject = 'Confirm your account';
     this.user = user;
@@ -26,4 +31,4 @@ class ConfirmationMail {
   }
 }
 
-module.exports = ConfirmationMail;
+export default ConfirmationMail;

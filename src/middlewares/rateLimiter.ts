@@ -1,7 +1,7 @@
-const rateLimit = require('express-rate-limit');
+import rateLimit from 'express-rate-limit';
 
 // Rate limit for all requests
-const globalLimiter = rateLimit({
+export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -13,7 +13,7 @@ const globalLimiter = rateLimit({
 });
 
 // Stricter limit for auth routes (login/register) to prevent brute force
-const authLimiter = rateLimit({
+export const authLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 20, // Limit each IP to 20 login/register requests per hour
     standardHeaders: true,
@@ -23,8 +23,3 @@ const authLimiter = rateLimit({
       message: 'Too many login attempts from this IP, please try again after an hour',
     },
 });
-
-module.exports = {
-  globalLimiter,
-  authLimiter
-};

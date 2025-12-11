@@ -1,14 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const hpp = require('hpp');
-const { globalLimiter } = require('./middlewares/rateLimiter');
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const errorHandler = require('./handlers/errorHandler');
-const responseMiddleware = require('./middlewares/responseMiddleware');
-const path = require('path');
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import hpp from 'hpp';
+import { globalLimiter } from './middlewares/rateLimiter';
+import authRoutes from './routes/authRoutes';
+import userRoutes from './routes/userRoutes';
+import errorHandler from './handlers/errorHandler';
+// @ts-ignore
+import responseMiddleware from './middlewares/responseMiddleware';
+import path from 'path';
 
 const app = express();
 
@@ -36,7 +37,7 @@ app.use(responseMiddleware);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to the API Mijo' });
 });
 
@@ -46,4 +47,4 @@ app.use('/api/users', userRoutes);
 // Error Handler
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

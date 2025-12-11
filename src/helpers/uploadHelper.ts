@@ -1,8 +1,9 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { Request, Response } from 'express';
 
-const createUploadMiddleware = (uploadPath) => {
+const createUploadMiddleware = (uploadPath: string) => {
   // Ensure upload directory exists
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
@@ -18,7 +19,7 @@ const createUploadMiddleware = (uploadPath) => {
     }
   });
 
-  const fileFilter = (req, file, cb) => {
+  const fileFilter = (req: any, file: any, cb: any) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -35,35 +36,10 @@ const createUploadMiddleware = (uploadPath) => {
   });
 };
 
-/**
-      cb(new Error('¡No es una imagen! Por favor, sube una imagen.'), false);
-    }
-  };
-
-  return multer({ 
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: {
-      fileSize: 1024 * 1024 * 5 // Límite de 5MB
-    }
-  });
-};
-
-/**
- * Maneja la subida de un solo archivo.
- * Puede aceptar una instancia de Multer existente o una cadena de ruta de destino.
- * Envuelve el middleware de Multer en una Promesa.
- * 
- * @param {Object|string} uploadOrPath - La instancia de Multer O una cadena de ruta de destino.
- * @param {string} fieldName - El nombre del campo en el form-data.
- * @param {Object} req - El objeto de solicitud de Express.
- * @param {Object} res - El objeto de respuesta de Express.
- * @returns {Promise<void>}
- */
 const createMemoryUploadMiddleware = () => {
   const storage = multer.memoryStorage();
   
-  const fileFilter = (req, file, cb) => {
+  const fileFilter = (req: any, file: any, cb: any) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -89,17 +65,18 @@ const createMemoryUploadMiddleware = () => {
  * @param {Object} res - Objeto Response de Express.
  * @returns {Promise<void>} - Resuelve si la subida es exitosa, rechaza si hay error.
  */
-const handleMemoryUpload = (fieldName, req, res) => {
+export const handleMemoryUpload = (fieldName: string, req: Request, res: Response): Promise<void> => {
   const upload = createMemoryUploadMiddleware();
   return new Promise((resolve, reject) => {
-    upload.single(fieldName)(req, res, (err) => {
+    // @ts-ignore
+    upload.single(fieldName)(req, res, (err: any) => {
       if (err) return reject(err);
       resolve();
     });
   });
 };
 
-const handleSingleUpload = (uploadOrPath, fieldName, req, res) => {
+export const handleSingleUpload = (uploadOrPath: any, fieldName: string, req: Request, res: Response): Promise<void> => {
   let upload = uploadOrPath;
 
   if (typeof uploadOrPath === 'string') {
@@ -107,14 +84,10 @@ const handleSingleUpload = (uploadOrPath, fieldName, req, res) => {
   }
 
   return new Promise((resolve, reject) => {
-    upload.single(fieldName)(req, res, (err) => {
+    // @ts-ignore
+    upload.single(fieldName)(req, res, (err: any) => {
       if (err) return reject(err);
       resolve();
     });
   });
-};
-
-module.exports = {
-  handleSingleUpload,
-  handleMemoryUpload
 };

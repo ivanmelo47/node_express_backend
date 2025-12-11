@@ -1,6 +1,7 @@
-const AuthService = require('@/services/AuthService');
+import AuthService from '@/services/AuthService';
+import { Request, Response, NextFunction } from 'express';
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (req: any, res: any, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -19,17 +20,17 @@ const authMiddleware = async (req, res, next) => {
       return res.errorResponse('Unauthorized: Invalid token', 401);
     }
 
-    const accessToken = result;
+    const accessToken: any = result;
 
     // Attach user and token info to request
     req.user = accessToken.User;
     req.token = accessToken;
     
     next();
-  } catch (error) {
+  } catch (error: any) {
     console.error('Auth Middleware Error:', error);
     res.errorResponse('Internal Server Error', 500, error.message);
   }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;

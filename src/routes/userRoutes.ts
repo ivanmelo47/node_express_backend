@@ -1,10 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const userController = require('@/controllers/userController');
-const authMiddleware = require('@/middlewares/authMiddleware');
+import express from 'express';
+// @ts-ignore
+import * as userController from '@/controllers/userController';
+import authMiddleware from '@/middlewares/authMiddleware';
+import roleMiddleware from '@/middlewares/roleMiddleware';
+import abilityMiddleware from '@/middlewares/abilityMiddleware';
 
-const roleMiddleware = require('@/middlewares/roleMiddleware');
-const abilityMiddleware = require('@/middlewares/abilityMiddleware');
+const router = express.Router();
 
 // Public or Authenticated routes (depending on requirements, here keeping them authenticated)
 router.get('/', authMiddleware, abilityMiddleware('user:read'), userController.getUsers);
@@ -15,4 +16,4 @@ router.post('/', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('u
 router.put('/:id', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:update'), userController.updateUser);
 router.delete('/:id', authMiddleware, roleMiddleware(['admin']), abilityMiddleware('user:delete'), userController.deleteUser);
 
-module.exports = router;
+export default router;

@@ -1,5 +1,7 @@
-const abilityMiddleware = (ability) => {
-  return (req, res, next) => {
+import { NextFunction } from "express";
+
+const abilityMiddleware = (ability: string) => {
+  return (req: any, res: any, next: NextFunction) => {
     // Ensure request is authenticated
     if (!req.token) {
       return res.errorResponse('Unauthorized: No token provided', 401);
@@ -14,4 +16,4 @@ const abilityMiddleware = (ability) => {
   };
 };
 
-module.exports = abilityMiddleware;
+export default abilityMiddleware;

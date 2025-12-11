@@ -1,7 +1,8 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('@/config/database');
-const Role = require('./Role');
-const PersonalAccessToken = require('./PersonalAccessToken');
+import { DataTypes } from 'sequelize';
+// @ts-ignore
+import sequelize from '@/config/database';
+import Role from './Role';
+import PersonalAccessToken from './PersonalAccessToken';
 
 const User = sequelize.define('User', {
   id: {
@@ -51,4 +52,4 @@ Role.hasMany(User, { foreignKey: 'roleId' });
 User.hasMany(PersonalAccessToken, { foreignKey: 'userId' });
 PersonalAccessToken.belongsTo(User, { foreignKey: 'userId' });
 
-module.exports = User;
+export default User;

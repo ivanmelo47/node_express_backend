@@ -1,12 +1,14 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 class Transporter {
+  private transporter: any;
+
   constructor() {
     const encryption = process.env.MAIL_ENCRYPTION;
     
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
+      port: Number(process.env.MAIL_PORT),
       secure: encryption === 'ssl', 
       requireTLS: encryption === 'tls',
       auth: {
@@ -20,7 +22,7 @@ class Transporter {
    * Send an email using a Mailable object.
    * @param {Object} mailable - An object with { to, subject, html }.
    */
-  async send(mailable) {
+  async send(mailable: any) {
     const mailOptions = {
       from: '"No Reply" <noreply@example.com>',
       to: mailable.to,
@@ -39,4 +41,4 @@ class Transporter {
   }
 }
 
-module.exports = new Transporter();
+export default new Transporter();

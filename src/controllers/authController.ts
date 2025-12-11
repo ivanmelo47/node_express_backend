@@ -1,21 +1,22 @@
-const AuthService = require('@/services/AuthService');
-const { validationResult } = require('express-validator');
-const authRules = require('@/rules/authRules');
+import AuthService from '@/services/AuthService';
+import { validationResult } from 'express-validator';
+import * as authRules from '@/rules/authRules';
+import { Request, Response } from 'express';
 
 // Helper to run validations imperatively
-const validate = async (req, rules) => {
+const validate = async (req: Request, rules: any[]) => {
     await Promise.all(rules.map(validation => validation.run(req)));
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const error = new Error('Validation Failed');
+        const error: any = new Error('Validation Failed');
         error.statusCode = 422;
         error.data = errors.array();
         throw error; // Let the catch block handle response
     }
 };
 
-exports.register = async (req, res) => {
+export const register = async (req: Request, res: any) => {
   try {
     // Run validation rules from src/rules/authRules.js
     await validate(req, authRules.registerRules);
@@ -33,7 +34,7 @@ exports.register = async (req, res) => {
       mockConfirmationToken: confirmationToken 
     }, 'User registered successfully', 201);
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Register Error:', error);
     const statusCode = error.statusCode || 500;
     // Check if it's a validation error with data
@@ -44,7 +45,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req: Request, res: any) => {
   try {
     // Run validation rules
     await validate(req, authRules.loginRules);
@@ -63,7 +64,7 @@ exports.login = async (req, res) => {
       token,
     }, 'Login successful');
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login Error:', error);
     const statusCode = error.statusCode || 500;
      if (statusCode === 422 && error.data) {
@@ -73,7 +74,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.confirmAccount = async (req, res) => {
+export const confirmAccount = async (req: Request, res: any) => {
   try {
     await validate(req, authRules.confirmAccountRules);
 
@@ -82,7 +83,7 @@ exports.confirmAccount = async (req, res) => {
 
     res.successResponse(null, 'Account confirmed successfully');
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Confirmation Error:', error);
     const statusCode = error.statusCode || 500;
      if (statusCode === 422 && error.data) {

@@ -1,10 +1,11 @@
-const User = require('@/models/User');
-const Role = require('@/models/Role');
-const ImageService = require('@/services/ImageService');
-const db = require('@/config/database');
-const { handleMemoryUpload } = require('@/helpers/uploadHelper');
-const fs = require('fs');
-const path = require('path');
+import User from '@/models/User';
+import Role from '@/models/Role';
+import ImageService from '@/services/ImageService';
+// @ts-ignore
+import db from '@/config/database';
+import { handleMemoryUpload } from '@/helpers/uploadHelper';
+import fs from 'fs';
+import path from 'path';
 
 class UserService {
   /**
@@ -12,7 +13,7 @@ class UserService {
    * @param {Object} data - Datos del usuario (nombre, email, roleId, etc.).
    * @returns {Promise<User>}
    */
-  static async createUser(data) {
+  static async createUser(data: any) {
     const t = await db.init();
     try {
       // Si se proporciona el nombre del rol en lugar del ID, resolverlo (lógica de ayuda opcional)
@@ -46,7 +47,7 @@ class UserService {
    * @param {number} id
    * @returns {Promise<User|null>}
    */
-  static async getUserById(id) {
+  static async getUserById(id: number) {
     return await User.findByPk(id, {
       include: ['Role']
     });
@@ -61,10 +62,10 @@ class UserService {
    * @param {Object} [res=null] - Objeto response de Express (necesario si se usa req).
    * @returns {Promise<User|null>} - Usuario actualizado o null si no se encuentra.
    */
-  static async updateUser(id, dataOrReq, res = null) {
+  static async updateUser(id: number, dataOrReq: any, res: any = null) {
     const t = await db.init();
     const uploadPath = path.join(__dirname, '../../public/uploads/profiles');
-    let data = {};
+    let data: any = {};
     let newImageName = null;
 
     try {
@@ -122,7 +123,7 @@ class UserService {
    * @param {number} id
    * @returns {Promise<boolean>} - True si se eliminó, false si no se encontró
    */
-  static async deleteUser(id) {
+  static async deleteUser(id: number) {
     const t = await db.init();
     try {
       const user = await User.findByPk(id, { transaction: t });
@@ -145,4 +146,4 @@ class UserService {
   }
 }
 
-module.exports = UserService;
+export default UserService;

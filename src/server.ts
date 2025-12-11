@@ -1,11 +1,17 @@
-const moduleAlias = require('module-alias');
-const path = require('path');
-moduleAlias.addAlias('@', __dirname);
+import 'module-alias/register';
+import dotenv from 'dotenv';
+import moduleAlias from 'module-alias';
+import path from 'path';
 
-require('dotenv').config();
+// Alias is registered via module-alias/register for normal execution, 
+// but we might want to register it explicitly if paths are complex.
+// For now, depending on tsconfig-paths for dev.
+moduleAlias.addAlias('@', path.join(__dirname));
 
-const app = require('./app');
-const sequelize = require('./config/database');
+dotenv.config();
+
+import app from './app';
+import sequelize from './config/database';
 
 const PORT = process.env.PORT || 3000;
 

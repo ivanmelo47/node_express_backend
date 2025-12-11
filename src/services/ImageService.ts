@@ -1,6 +1,6 @@
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+import sharp from 'sharp';
+import path from 'path';
+import fs from 'fs';
 
 class ImageService {
   /**
@@ -10,7 +10,7 @@ class ImageService {
    * @param {string} [filenameBase] - Nombre base opcional. Si no se da, se genera uno (no recomendado para actualizar).
    * @returns {Promise<Object>} - Objeto con los nombres de archivo generados.
    */
-  static async processProfileImage(buffer, destinationDir, filenameBase = null) {
+  static async processProfileImage(buffer: Buffer, destinationDir: string, filenameBase: string | null = null): Promise<any> {
     if (!fs.existsSync(destinationDir)) {
       fs.mkdirSync(destinationDir, { recursive: true });
     }
@@ -53,7 +53,7 @@ class ImageService {
    * @param {string} filenameBase - Nombre base (sin extensión) de la imagen a borrar.
    * @returns {void}
    */
-  static deleteProfileImage(destinationDir, filenameBase) {
+  static deleteProfileImage(destinationDir: string, filenameBase: string): void {
     if (!filenameBase) return;
 
     // Asumimos que la BD guarda solo el "filenameBase"
@@ -74,4 +74,4 @@ class ImageService {
   }
 }
 
-module.exports = ImageService;
+export default ImageService;

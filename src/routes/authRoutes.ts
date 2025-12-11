@@ -1,7 +1,9 @@
-const express = require('express');
+import express from 'express';
+// @ts-ignore
+import * as authController from '@/controllers/authController';
+import { authLimiter } from '@/middlewares/rateLimiter';
+
 const router = express.Router();
-const authController = require('../controllers/authController');
-const { authLimiter } = require('../middlewares/rateLimiter');
 
 // Apply stricter rate limit to authentication routes
 router.use(authLimiter);
@@ -10,4 +12,4 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/confirm-account', authController.confirmAccount);
 
-module.exports = router;
+export default router;

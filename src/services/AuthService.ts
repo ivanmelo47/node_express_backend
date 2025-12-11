@@ -1,10 +1,10 @@
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
-const PersonalAccessToken = require('@/models/PersonalAccessToken');
-const User = require('@/models/User');
-const Role = require('@/models/Role');
-const Transporter = require('@/mails/Transporter');
-const ConfirmationMail = require('@/mails/ConfirmationMail');
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
+import PersonalAccessToken from '@/models/PersonalAccessToken';
+import User from '@/models/User';
+import Role from '@/models/Role';
+import Transporter from '@/mails/Transporter';
+import ConfirmationMail from '@/mails/ConfirmationMail';
 
 class AuthService {
 
@@ -13,13 +13,13 @@ class AuthService {
    * @param {Object} data - { name, email, password }
    * @returns {Object} - { user, confirmationToken }
    */
-  static async register(data) {
+  static async register(data: any) {
     const { name, email, password } = data;
 
     // Check if user exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-        const error = new Error('Email already in use');
+        const error: any = new Error('Email already in use');
         error.statusCode = 400; // Using statusCode property for cleaner controller handling if desired
         throw error;
     }
@@ -59,7 +59,7 @@ class AuthService {
    * @param {string} password 
    * @returns {Object} - { user, token, roleName }
    */
-  static async login(email, password) {
+  static async login(email: string, password: string) {
     // Find user with Role
     const user = await User.findOne({ 
       where: { email },
@@ -67,7 +67,7 @@ class AuthService {
     });
     
     if (!user) {
-      const error = new Error('Invalid credentials');
+      const error: any = new Error('Invalid credentials');
       error.statusCode = 401;
       throw error;
     }
@@ -75,20 +75,20 @@ class AuthService {
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      const error = new Error('Invalid credentials');
+      const error: any = new Error('Invalid credentials');
       error.statusCode = 401;
       throw error;
     }
 
     // Check status and confirmation
     if (!user.status) {
-        const error = new Error('Account is disabled. Please contact support.');
+        const error: any = new Error('Account is disabled. Please contact support.');
         error.statusCode = 403;
         throw error;
     }
 
     if (!user.confirmed) {
-        const error = new Error('Please confirm your email address before logging in.');
+        const error: any = new Error('Please confirm your email address before logging in.');
         error.statusCode = 403;
         throw error;
     }
@@ -114,11 +114,11 @@ class AuthService {
    * @param {string} token 
    * @returns {Object} user
    */
-  static async confirmAccount(token) {
+  static async confirmAccount(token: string) {
     const user = await User.findOne({ where: { confirmationToken: token } });
 
     if (!user) {
-        const error = new Error('Invalid or expired confirmation token');
+        const error: any = new Error('Invalid or expired confirmation token');
         error.statusCode = 404; // Not Found
         throw error;
     }
@@ -137,7 +137,7 @@ class AuthService {
    * @param {Array} abilities - List of abilities ['register', 'edit', 'delete'].
    * @returns {string} - The plain text token.
    */
-  static async createToken(user, abilities = []) {
+  static async createToken(user: any, abilities: string[] = []) {
     const token = crypto.randomBytes(40).toString('hex');
     
     const expiresAt = new Date();
@@ -159,10 +159,11 @@ class AuthService {
    * @param {string} token - The token to validate.
    * @returns {Object|null} - The token instance with user or null.
    */
-  static async validateToken(token) {
+  static async validateToken(token: string) {
     const accessToken = await PersonalAccessToken.findOne({
       where: { token },
       include: [{
+        // @ts-ignore
         model: PersonalAccessToken.associations.User.target, // Or just 'User' if alias matches
         include: ['Role'] // Nested include to get Role from User
       }]
@@ -185,4 +186,4 @@ class AuthService {
   }
 }
 
-module.exports = AuthService;
+export default AuthService;

@@ -1,14 +1,12 @@
-/**
- * Generates the base HTML template for emails.
- * @param {Object} options
- * @param {string} options.headerTitle - Title shown in the header.
- * @param {string} options.contentTitle - Title shown in the content body.
- * @param {string} options.bodyContent - Main content HTML.
- * @param {string} options.actionUrl - URL for the call to action button.
- * @param {string} options.actionText - Text for the call to action button.
- * @returns {string} - The complete HTML string.
- */
-const BaseHtml = ({ headerTitle, contentTitle, bodyContent, actionUrl, actionText }) => {
+interface BaseHtmlOptions {
+  headerTitle: string;
+  contentTitle: string;
+  bodyContent: string;
+  actionUrl?: string;
+  actionText?: string;
+}
+
+const BaseHtml = ({ headerTitle, contentTitle, bodyContent, actionUrl, actionText }: BaseHtmlOptions) => {
     const year = new Date().getFullYear();
 
     return `
@@ -63,4 +61,4 @@ const BaseHtml = ({ headerTitle, contentTitle, bodyContent, actionUrl, actionTex
     `;
 };
 
-module.exports = BaseHtml;
+export default BaseHtml;

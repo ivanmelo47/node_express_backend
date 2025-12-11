@@ -1,5 +1,7 @@
-const roleMiddleware = (roles) => {
-  return (req, res, next) => {
+import { NextFunction } from "express";
+
+const roleMiddleware = (roles: string[]) => {
+  return (req: any, res: any, next: NextFunction) => {
     if (!req.user) {
       return res.errorResponse('Unauthorized', 401);
     }
@@ -14,4 +16,4 @@ const roleMiddleware = (roles) => {
   };
 };
 
-module.exports = roleMiddleware;
+export default roleMiddleware;

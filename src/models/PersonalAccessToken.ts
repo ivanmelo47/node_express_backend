@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('@/config/database');
+import { DataTypes } from 'sequelize';
+// @ts-ignore
+import sequelize from '@/config/database';
 
 const PersonalAccessToken = sequelize.define('PersonalAccessToken', {
   id: {
@@ -16,10 +17,12 @@ const PersonalAccessToken = sequelize.define('PersonalAccessToken', {
     type: DataTypes.TEXT,
     allowNull: true,
     get() {
+      // @ts-ignore
       const rawValue = this.getDataValue('abilities');
       return rawValue ? JSON.parse(rawValue) : [];
     },
-    set(value) {
+    set(value: any) {
+      // @ts-ignore
       this.setDataValue('abilities', JSON.stringify(value));
     }
   },
@@ -50,7 +53,7 @@ const PersonalAccessToken = sequelize.define('PersonalAccessToken', {
  * @param {string} ability
  * @returns {boolean}
  */
-PersonalAccessToken.prototype.can = function (ability) {
+PersonalAccessToken.prototype.can = function (ability: string): boolean {
   const abilities = this.abilities || [];
   
   if (abilities.includes('*')) {
@@ -70,4 +73,4 @@ PersonalAccessToken.prototype.can = function (ability) {
   return false;
 };
 
-module.exports = PersonalAccessToken;
+export default PersonalAccessToken;

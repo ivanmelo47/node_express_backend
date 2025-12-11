@@ -1,6 +1,6 @@
-const { body } = require('express-validator');
+import { body } from 'express-validator';
 
-const registerRules = [
+export const registerRules = [
     body('name')
         .notEmpty().withMessage('Name is required')
         .withMessage('Name must be a string')
@@ -12,7 +12,7 @@ const registerRules = [
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 ];
 
-const loginRules = [
+export const loginRules = [
     body('email')
         .isEmail().withMessage('Must be a valid email address')
         .normalizeEmail(),
@@ -20,14 +20,8 @@ const loginRules = [
         .notEmpty().withMessage('Password is required')
 ];
 
-const confirmAccountRules = [
+export const confirmAccountRules = [
     body('token')
         .notEmpty().withMessage('Token is required')
         .escape()
 ];
-
-module.exports = {
-    registerRules,
-    loginRules,
-    confirmAccountRules
-};

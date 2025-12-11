@@ -1,4 +1,4 @@
-const BaseResource = require('./BaseResource');
+import BaseResource from './BaseResource';
 
 class RoleResource extends BaseResource {
   toArray() {
@@ -10,4 +10,4 @@ class RoleResource extends BaseResource {
   }
 }
 
-module.exports = RoleResource;
+export default RoleResource;
