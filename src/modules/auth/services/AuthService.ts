@@ -5,6 +5,8 @@ import User from "@/modules/users/models/User";
 import Role from "@/modules/users/models/Role";
 import Transporter from "@/common/mails/Transporter";
 import ConfirmationMail from "@/common/mails/ConfirmationMail";
+import ForgotPasswordMail from "@/common/mails/ForgotPasswordMail";
+import ResetPasswordSuccessMail from "@/common/mails/ResetPasswordSuccessMail";
 import PasswordReset from "@/modules/auth/models/PasswordReset";
 // @ts-ignore
 import db from "@/config/database";
@@ -229,7 +231,9 @@ class AuthService {
       createdAt: new Date(),
     });
 
-    // TODO: Send email
+    // Send email
+    await Transporter.send(new ForgotPasswordMail(user, token));
+
     // For now returning token for verification
     return token;
   }
@@ -253,11 +257,22 @@ class AuthService {
         throw error;
       }
 
+      // Check if token already used
+      if (resetRecord.tokenUsed) {
+        const error: any = new Error("Token already used");
+        error.statusCode = 400;
+        throw error;
+      }
+
       // Check expiration (e.g., 1 hour)
       const now = new Date();
       const expirationTime = 60 * 60 * 1000; // 1 hour
       if (now.getTime() - resetRecord.createdAt.getTime() > expirationTime) {
-        await resetRecord.destroy({ transaction: t });
+        // We can choose to keep expired tokens too, but logic requested was about "reset" flow.
+        // If expired, maybe we shouldn't delete it either if we want full history?
+        // User said: "no quiero eliminar los tokens... quiero conservar esos tokens... historial"
+        // So let's NOT destroy it even if expired, just throw error.
+        // await resetRecord.destroy({ transaction: t }); 
         const error: any = new Error("Token expired");
         error.statusCode = 400;
         throw error;
@@ -269,8 +284,7 @@ class AuthService {
       });
 
       if (!user) {
-        // Should not happen if data integrity is kept, but safe check
-        await resetRecord.destroy({ transaction: t });
+        // await resetRecord.destroy({ transaction: t });
         const error: any = new Error("User not found");
         error.statusCode = 404;
         throw error;
@@ -280,16 +294,18 @@ class AuthService {
       user.password = hashedPassword;
       await user.save({ transaction: t });
 
-      // Delete valid token
-      await resetRecord.destroy({ transaction: t });
+      // Mark token as used instead of deleting
+      resetRecord.tokenUsed = true;
+      resetRecord.usedAt = new Date();
+      await resetRecord.save({ transaction: t });
 
-      // Optionally delete all other tokens for this email?
-      await PasswordReset.destroy({
-        where: { email: user.email },
-        transaction: t,
-      });
+      // DO NOT delete other tokens as requested ("no quiero eliminar los tokens... historial")
 
       await db.commit(t);
+
+      // Send success email
+      await Transporter.send(new ResetPasswordSuccessMail(user));
+
       return true;
     } catch (error) {
       await db.rollback(t);

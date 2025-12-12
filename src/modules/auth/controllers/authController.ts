@@ -124,17 +124,19 @@ export const forgotPassword = async (req: Request, res: any) => {
     const token = await AuthService.forgotPassword(email);
 
     // Mock sending email
-    console.log(`[Mock Email] Password Reset Token for ${email}: ${token}`);
+    // console.log(`[Mock Email] Password Reset Token for ${email}: ${token}`);
 
     res.successResponse(
       {
         message: "Password reset token sent to email.",
-        mockToken: token,
       },
       "Reset token generated"
     );
   } catch (error: any) {
     const statusCode = error.statusCode || 500;
+    if (statusCode === 422 && error.data) {
+      return res.errorResponse(error.message, statusCode, error.data);
+    }
     res.errorResponse(error.message, statusCode);
   }
 };
@@ -149,6 +151,9 @@ export const resetPassword = async (req: Request, res: any) => {
     res.successResponse(null, "Password has been reset successfully.");
   } catch (error: any) {
     const statusCode = error.statusCode || 500;
+    if (statusCode === 422 && error.data) {
+      return res.errorResponse(error.message, statusCode, error.data);
+    }
     res.errorResponse(error.message, statusCode);
   }
 };

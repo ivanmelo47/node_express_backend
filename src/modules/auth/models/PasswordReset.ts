@@ -23,6 +23,14 @@ const PasswordReset = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    tokenUsed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    usedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     tableName: "auth_password_resets",
