@@ -10,6 +10,12 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     primaryKey: true,
   },
+  uuid: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    allowNull: false,
+    unique: true,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -52,5 +58,9 @@ Role.hasMany(User, { foreignKey: 'roleId' });
 
 User.hasMany(PersonalAccessToken, { foreignKey: 'userId' });
 PersonalAccessToken.belongsTo(User, { foreignKey: 'userId' });
+
+import UserProfile from './UserProfile';
+User.hasOne(UserProfile, { foreignKey: 'userId', as: 'profile' });
+UserProfile.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 export default User;

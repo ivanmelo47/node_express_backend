@@ -43,12 +43,13 @@ class UserService {
   }
 
   /**
-   * Obtiene un usuario por ID.
-   * @param {number} id
+   * Obtiene un usuario por UUID.
+   * @param {string} uuid
    * @returns {Promise<User|null>}
    */
-  static async getUserById(id: number) {
-    return await User.findByPk(id, {
+  static async getUserByUuid(uuid: string) {
+    return await User.findOne({
+      where: { uuid },
       include: ['Role']
     });
   }
@@ -57,12 +58,12 @@ class UserService {
    * Actualiza un usuario.
    * Soporta sobrecarga: puede recibir el objeto request (req) para manejar la subida de archivos internamente.
    * 
-   * @param {number} id - ID del usuario a actualizar.
+   * @param {string} uuid - UUID del usuario a actualizar.
    * @param {Object} dataOrReq - Objeto de datos  o el objeto request de Express.
    * @param {Object} [res=null] - Objeto response de Express (necesario si se usa req).
    * @returns {Promise<User|null>} - Usuario actualizado o null si no se encuentra.
    */
-  static async updateUser(id: number, dataOrReq: any, res: any = null) {
+  static async updateUser(uuid: string, dataOrReq: any, res: any = null) {
     const t = await db.init();
     const uploadPath = path.join(__dirname, '../../../../public/uploads/profiles');
     let data: any = {};
@@ -87,7 +88,7 @@ class UserService {
           newImageName = data.image; // Si se pasa directamente
       }
 
-      const user = await User.findByPk(id, { transaction: t });
+      const user = await User.findOne({ where: { uuid }, transaction: t });
       if (!user) {
         await db.rollback(t);
         // Si el usuario no se encuentra, pero subimos una imagen, borrar la imagen nueva
@@ -120,13 +121,13 @@ class UserService {
 
   /**
    * Elimina un usuario (soft delete).
-   * @param {number} id
+   * @param {string} uuid
    * @returns {Promise<boolean>} - True si se eliminó, false si no se encontró
    */
-  static async deleteUser(id: number) {
+  static async deleteUser(uuid: string) {
     const t = await db.init();
     try {
-      const user = await User.findByPk(id, { transaction: t });
+      const user = await User.findOne({ where: { uuid }, transaction: t });
       if (!user) {
         await db.rollback(t);
         return false;

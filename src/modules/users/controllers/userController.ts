@@ -21,9 +21,9 @@ export const getUsers = async (req: Request, res: any, next: NextFunction) => {
   }
 };
 
-export const getUserById = async (req: Request, res: any, next: NextFunction) => {
+export const getUserByUuid = async (req: Request, res: any, next: NextFunction) => {
   try {
-    const user = await UserService.getUserById(Number(req.params.id));
+    const user = await UserService.getUserByUuid(req.params.uuid);
     if (!user) {
       return res.errorResponse('Usuario no encontrado', 404);
     }
@@ -37,7 +37,7 @@ export const getUserById = async (req: Request, res: any, next: NextFunction) =>
 export const updateUser = async (req: Request, res: any, next: NextFunction) => {
   try {
     // Delegar toda la lógica de subida y actualización al servicio
-    const user = await UserService.updateUser(Number(req.params.id), req, res);
+    const user = await UserService.updateUser(req.params.uuid, req, res);
     
     if (!user) {
       return res.errorResponse('Usuario no encontrado', 404);
@@ -51,7 +51,7 @@ export const updateUser = async (req: Request, res: any, next: NextFunction) => 
 
 export const deleteUser = async (req: Request, res: any, next: NextFunction) => {
   try {
-    const success = await UserService.deleteUser(Number(req.params.id));
+    const success = await UserService.deleteUser(req.params.uuid);
     if (!success) {
       return res.errorResponse('Usuario no encontrado', 404);
     }
