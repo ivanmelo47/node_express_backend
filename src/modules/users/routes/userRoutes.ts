@@ -14,13 +14,13 @@ const router = express.Router();
 router.get("/profile/me", authMiddleware, userProfileController.getMyProfile);
 router.put("/profile/me", authMiddleware, updateProfileRules, userProfileController.updateMyProfile);
 
-router.get("/", authMiddleware, abilityMiddleware("user:read"), userController.getUsers);
-router.get("/:uuid", authMiddleware, abilityMiddleware("user:read"), userController.getUserByUuid);
+router.get("/", authMiddleware, abilityMiddleware("read"), userController.getUsers);
+router.get("/:uuid", authMiddleware, abilityMiddleware("read"), userController.getUserByUuid);
 
 // Admin only routes (also checking for specific abilities for granularity)
-router.post("/", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("user:create"), userController.createUser);
+router.post("/", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("create"), userController.createUser);
 router.put("/profile/:uuid", authMiddleware, roleMiddleware(["admin"]), updateProfileRules, userProfileController.updateUserProfile);
-router.put("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("user:update"), userController.updateUser);
-router.delete("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("user:delete"), userController.deleteUser);
+router.put("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("update"), userController.updateUser);
+router.delete("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("delete"), userController.deleteUser);
 
 export default router;

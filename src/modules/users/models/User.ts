@@ -63,4 +63,18 @@ import UserProfile from './UserProfile';
 User.hasOne(UserProfile, { foreignKey: 'userId', as: 'profile' });
 UserProfile.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+import Ability from './Ability';
+User.belongsToMany(Ability, {
+  through: 'users_user_abilities',
+  foreignKey: 'userId',
+  otherKey: 'abilityId',
+  as: 'abilities'
+});
+Ability.belongsToMany(User, {
+  through: 'users_user_abilities',
+  foreignKey: 'abilityId',
+  otherKey: 'userId',
+  as: 'users'
+});
+
 export default User;

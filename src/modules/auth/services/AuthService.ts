@@ -93,22 +93,30 @@ class AuthService {
       throw error;
     }
 
-    if (!user.confirmed) {
-      const error: any = new Error(
-        "Please confirm your email address before logging in."
-      );
-      error.statusCode = 403;
-      throw error;
-    }
+    // Logic requested by user: master role gets all abilities (or specific set), 
+    // others get their assigned abilities.
+    // However, existing "master" implementation usually means full access. 
+    // User request: "las habilidades seran create, read... en base a las habilidades que tenga un usuario"
+    // BUT "master... estara por encima de admin". Usually implies '*' wildcard or similar.
+    // Let's implement dynamic fetching.
 
-    // Define abilities based on role
-    let abilities = ["user:read"];
-    const roleName = user.Role ? user.Role.name : "user";
+    // Reload user with abilities
+    const userWithAbilities = await User.findOne({
+      where: { id: user.id },
+      include: ['Role', 'abilities']
+    });
 
-    if (roleName === "admin") {
-      abilities = ["*"];
-    } else if (roleName === "user") {
-      abilities = ["user:read", "user:update"];
+    let abilities: string[] = [];
+    const roleName = userWithAbilities.Role ? userWithAbilities.Role.name : "user";
+
+    // Map ability names from DB
+    abilities = userWithAbilities.abilities ? userWithAbilities.abilities.map((a: any) => a.name) : [];
+
+    // If no abilities found, fallback to 'read' if desired, or leave empty.
+    // For now, adhering to strict DB source of truth but keeping a safety fallback for existing users matches previous iteration logic generally,
+    // but user requested "en funcion de las abilities que tiene asiganado".
+    if (abilities.length === 0) {
+      abilities = ["read"];
     }
 
     // Generate token

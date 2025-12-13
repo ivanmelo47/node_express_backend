@@ -17,6 +17,11 @@ const Role = sequelize.define('Role', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  hierarchy: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 99,
+  },
 }, {
   tableName: 'users_roles',
   timestamps: true,
