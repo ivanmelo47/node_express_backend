@@ -23,4 +23,8 @@ router.put("/profile/:uuid", authMiddleware, roleMiddleware(["admin"]), updatePr
 router.put("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("update"), userController.updateUser);
 router.delete("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("delete"), userController.deleteUser);
 
+// Master only routes - Abilities Management
+router.get("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.getUserAbilities);
+router.put("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.updateUserAbilities);
+
 export default router;

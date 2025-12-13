@@ -71,21 +71,21 @@ class UserService {
 
     try {
       // Checar si el segundo argumento es el objeto 'req' (o equivalente)
-      if (res && dataOrReq.on) { 
-          const req = dataOrReq;
-          // Manejar la subida del archivo a memoria
-          await handleMemoryUpload('image', req, res);
-          
-          data = { ...req.body };
+      if (res && dataOrReq.on) {
+        const req = dataOrReq;
+        // Manejar la subida del archivo a memoria
+        await handleMemoryUpload('image', req, res);
 
-          if (req.file) {
-              const imageResult = await ImageService.processProfileImage(req.file.buffer, uploadPath);
-              newImageName = imageResult.baseName;
-              data.image = newImageName;
-          }
+        data = { ...req.body };
+
+        if (req.file) {
+          const imageResult = await ImageService.processProfileImage(req.file.buffer, uploadPath);
+          newImageName = imageResult.baseName;
+          data.image = newImageName;
+        }
       } else {
-          data = dataOrReq;
-          newImageName = data.image; // Si se pasa directamente
+        data = dataOrReq;
+        newImageName = data.image; // Si se pasa directamente
       }
 
       const user = await User.findOne({ where: { uuid }, transaction: t });
@@ -93,7 +93,7 @@ class UserService {
         await db.rollback(t);
         // Si el usuario no se encuentra, pero subimos una imagen, borrar la imagen nueva
         if (newImageName) {
-            ImageService.deleteProfileImage(uploadPath, newImageName);
+          ImageService.deleteProfileImage(uploadPath, newImageName);
         }
         return null;
       }
@@ -135,11 +135,59 @@ class UserService {
 
       // Soft delete: NO borrar los archivos de imagen.
       // Mantenemos la imagen en caso de restauración.
-      
+
       await user.destroy({ transaction: t });
       await db.commit(t);
-      
+
       return true;
+    } catch (error) {
+      await db.rollback(t);
+      throw error;
+    }
+  }
+  /**
+   * Obtiene las habilidades de un usuario por UUID.
+   */
+  static async getUserAbilities(uuid: string) {
+    const user = await User.findOne({
+      where: { uuid },
+      include: ['abilities']
+    });
+
+    if (!user) return null;
+    return user.abilities;
+  }
+
+  /**
+   * Sincroniza las habilidades de un usuario.
+   * Reemplaza las habilidades actuales con la lista proporcionada.
+   */
+  static async syncUserAbilities(uuid: string, abilityNames: string[]) {
+    const t = await db.init();
+    try {
+      const user = await User.findOne({ where: { uuid }, transaction: t });
+      if (!user) {
+        await db.rollback(t);
+        return null;
+      }
+
+      // @ts-ignore
+      const Ability = await import('@/modules/users/models/Ability').then(m => m.default);
+
+      // Obtener los IDs de las habilidades solicitadas
+      const abilities = await Ability.findAll({
+        where: {
+          name: abilityNames
+        },
+        transaction: t
+      });
+
+      // Actualizar relaciones (setAbilities reemplaza las existentes)
+      // @ts-ignore
+      await user.setAbilities(abilities, { transaction: t });
+
+      await db.commit(t);
+      return abilities;
     } catch (error) {
       await db.rollback(t);
       throw error;
