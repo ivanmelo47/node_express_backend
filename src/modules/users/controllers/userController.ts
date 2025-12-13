@@ -91,3 +91,12 @@ export const updateUserAbilities = async (req: Request, res: any, next: NextFunc
     next(error);
   }
 };
+
+export const listAbilities = async (req: Request, res: any, next: NextFunction) => {
+  try {
+    const abilities = await UserService.getAllAbilities();
+    res.successResponse(abilities, 'Habilidades del sistema recuperadas exitosamente');
+  } catch (error) {
+    next(error);
+  }
+};

@@ -287,3 +287,78 @@ Realiza un borrado lógico.
     "message": "Usuario eliminado exitosamente"
   }
   ```
+
+---
+
+## Módulo: Gestión de Habilidades (Master)
+
+Requiere autenticación y rol **Master**.
+
+### 14. Obtener Habilidades de Usuario
+
+Obtiene la lista de habilidades asignadas específicamente a un usuario.
+
+- **Método:** `GET`
+- **URL:** `/users/:uuid/abilities`
+- **Permisos:** Master
+- **Respuesta (200 OK):**
+  ```json
+  ["create", "read", "update"]
+  ```
+
+### 15. Sincronizar Habilidades de Usuario
+
+Reemplaza todas las habilidades actuales del usuario con la lista proporcionada.
+
+- **Método:** `PUT`
+- **URL:** `/users/:uuid/abilities`
+- **Permisos:** Master
+- **Cuerpo (JSON):**
+  ```json
+  {
+    "abilities": ["create", "read", "update"]
+  }
+  ```
+- **Respuesta (200 OK):** Devuelve la nueva lista de habilidades asignadas.
+
+### 16. Listar Todas las Habilidades del Sistema
+
+Obtiene la lista de todas las habilidades disponibles en el sistema.
+
+- **Método:** `GET`
+- **URL:** `/users/abilities`
+- **Permisos:** Master
+- **Respuesta (200 OK):**
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "create",
+      "createdAt": "...",
+      "updatedAt": "..."
+    },
+    ...
+  ]
+  ```
+
+---
+
+## Notas de Seguridad y Jerarquía
+
+### Jerarquía de Roles
+
+El sistema utiliza una jerarquía numérica donde un número menor indica mayor privilegio:
+
+1. **Master** (Acceso Total)
+2. **Admin** (Administración General)
+3. **User** (Usuario Regular)
+
+El middleware de roles verifica si `Usuario.jerarquia <= RolRequerido.jerarquia`.
+
+### Habilidades (RBAC Dinámico)
+
+Además de roles, los usuarios tienen habilidades específicas (`create`, `read`, `update`, `delete`).
+
+- **Master/Admin**: Tienen habilidades asignadas en base de datos.
+- **User**: Tienen habilidades específicas asignadas.
+- El token JWT incluye estas habilidades para validación en el frontend.

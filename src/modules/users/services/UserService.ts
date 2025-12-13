@@ -193,6 +193,15 @@ class UserService {
       throw error;
     }
   }
+
+  /**
+   * Obtiene todas las habilidades disponibles en el sistema.
+   */
+  static async getAllAbilities() {
+    // @ts-ignore
+    const Ability = await import('@/modules/users/models/Ability').then(m => m.default);
+    return await Ability.findAll();
+  }
 }
 
 export default UserService;

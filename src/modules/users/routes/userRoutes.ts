@@ -24,6 +24,7 @@ router.put("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddlewar
 router.delete("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("delete"), userController.deleteUser);
 
 // Master only routes - Abilities Management
+router.get("/abilities", authMiddleware, roleMiddleware(["master"]), userController.listAbilities);
 router.get("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.getUserAbilities);
 router.put("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.updateUserAbilities);
 
