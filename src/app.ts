@@ -11,6 +11,8 @@ import errorHandler from "./common/handlers/errorHandler";
 import responseMiddleware from "./common/middlewares/responseMiddleware";
 import { ipWhitelist } from "./common/middlewares/ipWhitelist";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger";
 
 const app = express();
 
@@ -66,6 +68,12 @@ app.use(responseMiddleware);
 
 // Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+
+// Swagger UI (Documentation) - Only in Development
+if (process.env.NODE_ENV === "development") {
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  console.log("Swagger UI available at http://localhost:4000/docs");
+}
 
 // Routes
 app.get("/", (req: Request, res: Response) => {

@@ -7,6 +7,7 @@ Este documento proporciona detalles exhaustivos sobre cómo utilizar las APIs de
 - **URL Base:** `http://localhost:4000/api`
 - **Formato de Respuesta:** JSON estándar.
 - **Seguridad:** Autenticación vía Bearer Token (JWT).
+- **Documentación Interactiva (Swagger):** `http://localhost:4000/docs` (Solo en modo desarrollo)
 
 ---
 
