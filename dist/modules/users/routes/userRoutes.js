@@ -46,6 +46,8 @@ const authMiddleware_1 = __importDefault(require("@/modules/auth/middlewares/aut
 const roleMiddleware_1 = __importDefault(require("@/common/middlewares/roleMiddleware"));
 const abilityMiddleware_1 = __importDefault(require("@/common/middlewares/abilityMiddleware"));
 const router = express_1.default.Router();
+// Master only routes - Abilities Management
+router.get("/abilities", authMiddleware_1.default, (0, roleMiddleware_1.default)(["master"]), userController.listAbilities);
 // Public or Authenticated routes (depending on requirements, here keeping them authenticated)
 router.get("/profile/me", authMiddleware_1.default, userProfileController.getMyProfile);
 router.put("/profile/me", authMiddleware_1.default, userProfileRules_1.updateProfileRules, userProfileController.updateMyProfile);
@@ -56,8 +58,6 @@ router.post("/", authMiddleware_1.default, (0, roleMiddleware_1.default)(["admin
 router.put("/profile/:uuid", authMiddleware_1.default, (0, roleMiddleware_1.default)(["admin"]), userProfileRules_1.updateProfileRules, userProfileController.updateUserProfile);
 router.put("/:uuid", authMiddleware_1.default, (0, roleMiddleware_1.default)(["admin"]), (0, abilityMiddleware_1.default)("update"), userController.updateUser);
 router.delete("/:uuid", authMiddleware_1.default, (0, roleMiddleware_1.default)(["admin"]), (0, abilityMiddleware_1.default)("delete"), userController.deleteUser);
-// Master only routes - Abilities Management
-router.get("/abilities", authMiddleware_1.default, (0, roleMiddleware_1.default)(["master"]), userController.listAbilities);
 router.get("/:uuid/abilities", authMiddleware_1.default, (0, roleMiddleware_1.default)(["master"]), userController.getUserAbilities);
 router.put("/:uuid/abilities", authMiddleware_1.default, (0, roleMiddleware_1.default)(["master"]), userController.updateUserAbilities);
 exports.default = router;

@@ -19,6 +19,12 @@ class UserProfileService {
    * @returns {Promise<UserProfile>}
    */
   static async updateOrCreate(userId: number, data: any) {
+    // Flatten address object if present
+    if (data.address && typeof data.address === 'object') {
+      data = { ...data, ...data.address };
+      delete data.address; // Remove the nested object after flattening
+    }
+
     const t = await db.init();
     try {
       const [profile, created] = await UserProfile.findOrCreate({

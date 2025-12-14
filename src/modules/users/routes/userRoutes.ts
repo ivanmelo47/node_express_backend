@@ -10,6 +10,9 @@ import abilityMiddleware from "@/common/middlewares/abilityMiddleware";
 
 const router = express.Router();
 
+// Master only routes - Abilities Management
+router.get("/abilities", authMiddleware, roleMiddleware(["master"]), userController.listAbilities);
+
 // Public or Authenticated routes (depending on requirements, here keeping them authenticated)
 router.get("/profile/me", authMiddleware, userProfileController.getMyProfile);
 router.put("/profile/me", authMiddleware, updateProfileRules, userProfileController.updateMyProfile);
@@ -23,8 +26,6 @@ router.put("/profile/:uuid", authMiddleware, roleMiddleware(["admin"]), updatePr
 router.put("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("update"), userController.updateUser);
 router.delete("/:uuid", authMiddleware, roleMiddleware(["admin"]), abilityMiddleware("delete"), userController.deleteUser);
 
-// Master only routes - Abilities Management
-router.get("/abilities", authMiddleware, roleMiddleware(["master"]), userController.listAbilities);
 router.get("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.getUserAbilities);
 router.put("/:uuid/abilities", authMiddleware, roleMiddleware(["master"]), userController.updateUserAbilities);
 

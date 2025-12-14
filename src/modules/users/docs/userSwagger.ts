@@ -44,6 +44,12 @@
  *               gender:
  *                 type: string
  *                 enum: [M, F, O]
+ *               curp:
+ *                 type: string
+ *               rfc:
+ *                 type: string
+ *               emailAlternate:
+ *                 type: string
  *               bio:
  *                 type: string
  *               nationality:
@@ -221,6 +227,12 @@
  *               gender:
  *                 type: string
  *                 enum: [M, F, O]
+ *               curp:
+ *                 type: string
+ *               rfc:
+ *                 type: string
+ *               emailAlternate:
+ *                 type: string
  *               bio:
  *                 type: string
  *               nationality:
