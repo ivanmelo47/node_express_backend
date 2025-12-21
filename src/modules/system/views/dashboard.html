@@ -101,7 +101,6 @@
     <div class="container">
       <header>
         <h1>System Dashboard</h1>
-        <button onclick="logout()" class="logout-btn">Cerrar Sesión</button>
       </header>
 
       <div class="actions">
@@ -165,15 +164,6 @@
           )
         ) {
           runAction("reset");
-        }
-      }
-
-      async function logout() {
-        try {
-          await fetch("/api/system/logout", { method: "POST" });
-          window.location.href = "/api/system/login";
-        } catch (error) {
-          alert("Error al cerrar sesión");
         }
       }
     </script>

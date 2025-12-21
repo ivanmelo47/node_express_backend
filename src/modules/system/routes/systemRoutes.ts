@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { SystemController } from '../controllers/SystemController';
-import { systemLoginLimiter } from '../../../common/middlewares/rateLimiter';
+import { basicAuth } from '../../../common/middlewares/basicAuth';
 
 const router = Router();
 
-router.get('/login', SystemController.viewLogin);
-router.post('/login', systemLoginLimiter, SystemController.login);
+// Apply Basic Auth to all routes
+router.use(basicAuth);
+
 router.get('/dashboard', SystemController.viewDashboard);
-router.post('/logout', SystemController.logout);
 router.get('/logs', SystemController.getLogs);
 
 router.get('/migrate', SystemController.runMigrations);

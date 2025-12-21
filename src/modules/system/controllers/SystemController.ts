@@ -9,84 +9,13 @@ export class SystemController {
 
     // --- VIEW METHODS ---
 
-    static async viewLogin(req: Request, res: Response) {
-        if (req.cookies[AUTH_COOKIE_NAME]) {
-            return res.redirect('/api/system/dashboard');
-        }
-        res.sendFile(path.join(__dirname, '../views/login.html'));
-    }
-
     static async viewDashboard(req: Request, res: Response) {
-        if (!req.cookies[AUTH_COOKIE_NAME]) {
-            return res.redirect('/api/system/login');
-        }
         res.sendFile(path.join(__dirname, '../views/dashboard.html'));
-    }
-
-    // --- AUTH METHODS ---
-
-    static async login(req: Request, res: Response) {
-        try {
-            const { username, password } = req.body;
-
-            const validUser = process.env.SYSTEM_USER;
-            const validPass = process.env.SYSTEM_PASSWORD;
-
-            if (!validUser || !validPass) {
-                console.error("System credentials not configured in environment variables.");
-                return res.status(500).json({ success: false, message: 'Server configuration error: Missing env vars' });
-            }
-
-            if (username === validUser && password === validPass) {
-                res.cookie(AUTH_COOKIE_NAME, 'valid_session', {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production', // Use secure in production
-                    sameSite: 'strict',
-                    maxAge: 3600000 // 1 hour
-                });
-                return res.json({ success: true, message: 'Login successful' });
-            }
-
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
-        } catch (error: any) {
-            console.error("Login error:", error);
-
-            // Log to file explicitly since we are handling the error here
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const logPath = path.join(__dirname, '../../../logs/system.log');
-                const timestamp = new Date().toISOString();
-                fs.appendFileSync(logPath, `[${timestamp}] LOGIN ERROR: ${error.stack || error.message}\n`);
-            } catch (e) {
-                console.error("Failed to write to log file:", e);
-            }
-
-            return res.status(500).json({
-                success: false,
-                message: "Login failed due to server error",
-                error: error.message,
-                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-            });
-        }
-    }
-
-    static async logout(req: Request, res: Response) {
-        res.clearCookie(AUTH_COOKIE_NAME);
-        return res.json({ success: true, message: 'Logged out' });
     }
 
     // --- ACTION METHODS ---
 
-    private static checkAuth(req: Request): boolean {
-        return req.cookies[AUTH_COOKIE_NAME] === 'valid_session';
-    }
-
     static async runMigrations(req: Request, res: Response) {
-        if (!SystemController.checkAuth(req)) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
         try {
             console.log("Starting migrations...");
 
@@ -119,10 +48,6 @@ export class SystemController {
     }
 
     static async runSeeders(req: Request, res: Response) {
-        if (!SystemController.checkAuth(req)) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
         try {
             console.log("Starting seeders...");
 
@@ -155,10 +80,6 @@ export class SystemController {
     }
 
     static async resetDatabase(req: Request, res: Response) {
-        if (!SystemController.checkAuth(req)) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
         try {
             console.log("Resetting database (dropping all tables)...");
 
@@ -189,10 +110,6 @@ export class SystemController {
     }
 
     static async getLogs(req: Request, res: Response) {
-        /* if (!SystemController.checkAuth(req)) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        } */
-
         const fs = require('fs');
         const logPath = path.join(__dirname, '../../../logs/system.log');
 
