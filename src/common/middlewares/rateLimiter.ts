@@ -14,12 +14,24 @@ export const globalLimiter = rateLimit({
 
 // Stricter limit for auth routes (login/register) to prevent brute force
 export const authLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 20, // Limit each IP to 20 login/register requests per hour
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: {
-      status: 429,
-      message: 'Too many login attempts from this IP, please try again after an hour',
-    },
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 20, // Limit each IP to 20 login/register requests per hour
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message: 'Too many login attempts from this IP, please try again after an hour',
+  },
+});
+
+// Strict limit for system login (5 attempts per 15 minutes)
+export const systemLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message: 'Too many system login attempts, please try again after 15 minutes',
+  },
 });

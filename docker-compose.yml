@@ -22,6 +22,8 @@ services:
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Mexico_City}
+      - SYSTEM_USER=${SYSTEM_USER}
+      - SYSTEM_PASSWORD=${SYSTEM_PASSWORD}
     depends_on:
       - db
     networks:

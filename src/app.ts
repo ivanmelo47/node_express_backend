@@ -3,16 +3,19 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import hpp from "hpp";
+import cookieParser from 'cookie-parser';
+import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger";
+
 import { globalLimiter } from "./common/middlewares/rateLimiter";
 import authRoutes from "./modules/auth/routes/authRoutes";
 import userRoutes from "./modules/users/routes/userRoutes";
+import systemRoutes from "./modules/system/routes/systemRoutes";
 import errorHandler from "./common/handlers/errorHandler";
 // @ts-ignore
 import responseMiddleware from "./common/middlewares/responseMiddleware";
 import { ipWhitelist } from "./common/middlewares/ipWhitelist";
-import path from "path";
-import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./config/swagger";
 
 const app = express();
 
@@ -20,12 +23,24 @@ const app = express();
 app.set("trust proxy", 1);
 
 // Middlewares
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
+app.use(cookieParser());
 
 // CORS Configuration
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
   ? process.env.CORS_ALLOWED_ORIGINS.split(",")
   : ["http://localhost:3000", "http://localhost:4000", "https://ivanmelo.com"];
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -77,8 +92,6 @@ if (process.env.NODE_ENV === "development") {
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to the API Mijo" });
 });
-
-import systemRoutes from "./modules/system/routes/systemRoutes";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

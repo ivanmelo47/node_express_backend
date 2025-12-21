@@ -35,6 +35,9 @@ COPY --from=builder /app/src/config ./src/config
 COPY --from=builder /app/src/database/migrations ./dist/database/migrations
 COPY --from=builder /app/src/database/seeders ./dist/database/seeders
 
+# Copy system views (HTML files)
+COPY --from=builder /app/src/modules/system/views ./dist/modules/system/views
+
 # Install sequelize-cli globally if needed for migrations in entrypoint, 
 # or use npx in the command. 
 # Installing globally for convenience if we run it manually.
