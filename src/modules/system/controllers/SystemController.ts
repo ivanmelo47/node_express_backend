@@ -26,27 +26,37 @@ export class SystemController {
     // --- AUTH METHODS ---
 
     static async login(req: Request, res: Response) {
-        const { username, password } = req.body;
+        try {
+            const { username, password } = req.body;
 
-        const validUser = process.env.SYSTEM_USER;
-        const validPass = process.env.SYSTEM_PASSWORD;
+            const validUser = process.env.SYSTEM_USER;
+            const validPass = process.env.SYSTEM_PASSWORD;
 
-        if (!validUser || !validPass) {
-            console.error("System credentials not configured in environment variables.");
-            return res.status(500).json({ success: false, message: 'Server configuration error' });
-        }
+            if (!validUser || !validPass) {
+                console.error("System credentials not configured in environment variables.");
+                return res.status(500).json({ success: false, message: 'Server configuration error: Missing env vars' });
+            }
 
-        if (username === validUser && password === validPass) {
-            res.cookie(AUTH_COOKIE_NAME, 'valid_session', {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', // Use secure in production
-                sameSite: 'strict',
-                maxAge: 3600000 // 1 hour
+            if (username === validUser && password === validPass) {
+                res.cookie(AUTH_COOKIE_NAME, 'valid_session', {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production', // Use secure in production
+                    sameSite: 'strict',
+                    maxAge: 3600000 // 1 hour
+                });
+                return res.json({ success: true, message: 'Login successful' });
+            }
+
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        } catch (error: any) {
+            console.error("Login error:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Login failed due to server error",
+                error: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
             });
-            return res.json({ success: true, message: 'Login successful' });
         }
-
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     static async logout(req: Request, res: Response) {
