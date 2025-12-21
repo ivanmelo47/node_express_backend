@@ -50,6 +50,18 @@ export class SystemController {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         } catch (error: any) {
             console.error("Login error:", error);
+
+            // Log to file explicitly since we are handling the error here
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const logPath = path.join(__dirname, '../../../logs/system.log');
+                const timestamp = new Date().toISOString();
+                fs.appendFileSync(logPath, `[${timestamp}] LOGIN ERROR: ${error.stack || error.message}\n`);
+            } catch (e) {
+                console.error("Failed to write to log file:", e);
+            }
+
             return res.status(500).json({
                 success: false,
                 message: "Login failed due to server error",
