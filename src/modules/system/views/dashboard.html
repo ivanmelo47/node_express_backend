@@ -101,6 +101,7 @@
     <div class="container">
       <header>
         <h1>System Dashboard</h1>
+        <button onclick="logout()" class="logout-btn">Cerrar Sesión</button>
       </header>
 
       <div class="actions">
@@ -165,6 +166,19 @@
         ) {
           runAction("reset");
         }
+      }
+
+      function logout() {
+        // Basic Auth "Logout" Hack: Overwrite credentials with invalid ones
+        // This forces the browser to discard the real 'admin:password'
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const path = window.location.pathname;
+        
+        // Redirect to same URL but with "logout:logout" credentials
+        // This will trigger a 401 (since "logout" user doesn't exist)
+        // effectively clearing the cache.
+        window.location.href = `${protocol}//logout:logout@${host}${path}`;
       }
     </script>
   </body>
