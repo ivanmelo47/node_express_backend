@@ -37,7 +37,9 @@ const options = {
             },
         ],
     },
-    apis: ['./src/modules/**/docs/*.ts', './src/app.ts'], // Path to the API docs
+    apis: process.env.NODE_ENV === 'development'
+        ? ['./dist/modules/**/docs/*.js', './dist/app.js']
+        : ['./src/modules/**/docs/*.ts', './src/app.ts'],
 };
 const swaggerSpec = (0, swagger_jsdoc_1.default)(options);
 exports.default = swaggerSpec;

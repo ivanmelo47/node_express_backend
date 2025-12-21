@@ -23,11 +23,9 @@ app.set("trust proxy", 1);
 app.use(helmet());
 
 // CORS Configuration
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:4000",
-  "https://ivanmelo.com",
-];
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+  ? process.env.CORS_ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:3000", "http://localhost:4000", "https://ivanmelo.com"];
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -80,8 +78,11 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to the API Mijo" });
 });
 
+import systemRoutes from "./modules/system/routes/systemRoutes";
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/system", systemRoutes);
 
 // Error Handler
 app.use(errorHandler);

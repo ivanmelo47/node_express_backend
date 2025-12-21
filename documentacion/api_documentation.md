@@ -363,3 +363,63 @@ Además de roles, los usuarios tienen habilidades específicas (`create`, `read`
 - **Master/Admin**: Tienen habilidades asignadas en base de datos.
 - **User**: Tienen habilidades específicas asignadas.
 - El token JWT incluye estas habilidades para validación en el frontend.
+
+---
+
+## Módulo: Sistema (`/system`)
+
+Endpoints administrativos para mantenimiento de la base de datos. Requieren un token estático de seguridad.
+
+### 17. Ejecutar Migraciones
+
+Ejecuta las migraciones pendientes en la base de datos (`sequelize-cli db:migrate`).
+
+- **Método:** `GET`
+- **URL:** `/system/migrate`
+- **Parámetros (Query):**
+  - `token`: Token de seguridad estático (`MIGRATION_SECURE_TOKEN_2025`).
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Migrations executed successfully",
+    "details": {
+      "migration": "..."
+    }
+  }
+  ```
+
+### 18. Ejecutar Seeders
+
+Ejecuta los seeders para poblar la base de datos con datos iniciales (`sequelize-cli db:seed:all`).
+
+- **Método:** `GET`
+- **URL:** `/system/seed`
+- **Parámetros (Query):**
+  - `token`: Token de seguridad estático (`MIGRATION_SECURE_TOKEN_2025`).
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Seeds executed successfully",
+    "details": {
+      "seed": "..."
+    }
+  }
+  ```
+
+### 19. Resetear Base de Datos
+
+Elimina todas las tablas (incluyendo `SequelizeMeta`) y deja la base de datos limpia. **¡CUIDADO! Esta acción es destructiva.**
+
+- **Método:** `GET`
+- **URL:** `/system/reset`
+- **Parámetros (Query):**
+  - `token`: Token de seguridad estático (`MIGRATION_SECURE_TOKEN_2025`).
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Database reset successfully (all tables dropped including SequelizeMeta)"
+  }
+  ```

@@ -1,7 +1,17 @@
- import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
-// Define allowed IPs. In a real app, these might come from specific ENV vars (e.g., WHITELISTED_IPS=127.0.0.1,::1)
-const allowedIps = ["::1", "127.0.0.1"];
+// Define allowed IPs.
+// If WHITELISTED_IPS is set in env, use it (comma separated).
+// If WHITELISTED_IPS is '*', allow all.
+// Default to localhost if not set.
+const getAllowedIps = (): string[] | string => {
+  const envIps = process.env.WHITELISTED_IPS;
+  if (envIps === "*") return "*";
+  if (envIps) {
+    return envIps.split(",").map((ip) => ip.trim());
+  }
+  return ["::1", "127.0.0.1"];
+};
 
 export const ipWhitelist = (
   req: Request,
@@ -16,8 +26,10 @@ export const ipWhitelist = (
     clientIp = "127.0.0.1";
   }
 
-  // Allow if IP is in the list
-  if (allowedIps.includes(clientIp as string)) {
+  const allowedIps = getAllowedIps();
+
+  // Allow if wildcard or IP is in the list
+  if (allowedIps === "*" || (Array.isArray(allowedIps) && allowedIps.includes(clientIp as string))) {
     return next();
   }
 

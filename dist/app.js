@@ -24,11 +24,9 @@ app.set("trust proxy", 1);
 // Middlewares
 app.use((0, helmet_1.default)());
 // CORS Configuration
-const allowedOrigins = [
-    "http://localhost:3000",
-    "http://localhost:4000",
-    "https://ivanmelo.com",
-];
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+    ? process.env.CORS_ALLOWED_ORIGINS.split(",")
+    : ["http://localhost:3000", "http://localhost:4000", "https://ivanmelo.com"];
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
