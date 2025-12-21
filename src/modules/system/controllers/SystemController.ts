@@ -175,4 +175,26 @@ export class SystemController {
             });
         }
     }
+
+    static async getLogs(req: Request, res: Response) {
+        /* if (!SystemController.checkAuth(req)) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        } */
+
+        const fs = require('fs');
+        const logPath = path.join(__dirname, '../../../logs/system.log');
+
+        if (!fs.existsSync(logPath)) {
+            return res.send("No logs found.");
+        }
+
+        // Read last 100 lines or full file
+        fs.readFile(logPath, 'utf8', (err: any, data: string) => {
+            if (err) {
+                return res.status(500).send("Error reading logs");
+            }
+            res.set('Content-Type', 'text/plain');
+            res.send(data);
+        });
+    }
 }

@@ -65,6 +65,18 @@ app.use(
 // For now, let's activate it but make sure '::1' and '127.0.0.1' are there (which they are).
 app.use(ipWhitelist);
 
+import fs from 'fs';
+
+// Create logs directory if it doesn't exist
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir);
+}
+
+// Log to file
+const accessLogStream = fs.createWriteStream(path.join(logsDir, 'system.log'), { flags: 'a' });
+
+app.use(morgan("combined", { stream: accessLogStream }));
 app.use(morgan("dev"));
 
 // Rate Limiting

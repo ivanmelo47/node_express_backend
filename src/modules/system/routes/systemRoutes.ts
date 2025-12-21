@@ -8,6 +8,7 @@ router.get('/login', SystemController.viewLogin);
 router.post('/login', systemLoginLimiter, SystemController.login);
 router.get('/dashboard', SystemController.viewDashboard);
 router.post('/logout', SystemController.logout);
+router.get('/logs', SystemController.getLogs);
 
 router.get('/migrate', SystemController.runMigrations);
 router.get('/seed', SystemController.runSeeders);
