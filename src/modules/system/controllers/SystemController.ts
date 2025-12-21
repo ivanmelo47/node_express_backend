@@ -31,9 +31,9 @@ export class SystemController {
             return res.json({
                 success: true,
                 message: "Migrations executed successfully",
-                details: {
+                /* details: {
                     migration: migrationOutput
-                }
+                } */
             });
         } catch (error: any) {
             console.error("Execution failed:", error);
@@ -73,9 +73,9 @@ export class SystemController {
             return res.json({
                 success: true,
                 message: "Seeds executed successfully",
-                details: {
+                /* details: {
                     seed: seedOutput
-                }
+                } */
             });
         } catch (error: any) {
             console.error("Execution failed:", error);
