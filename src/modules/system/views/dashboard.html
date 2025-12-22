@@ -108,22 +108,32 @@
         <div class="action-card">
           <h3>Migraciones</h3>
           <p>Ejecutar migraciones pendientes.</p>
-          <button onclick="runAction('migrate')" class="btn btn-primary">
+          <button onclick="confirmAction('migrate', 'Ejecutar Migraciones')" class="btn btn-primary">
             Ejecutar Migraciones
           </button>
         </div>
         <div class="action-card">
           <h3>Seeders</h3>
           <p>Poblar base de datos.</p>
-          <button onclick="runAction('seed')" class="btn btn-success">
+          <button onclick="confirmAction('seed', 'Ejecutar Seeders')" class="btn btn-success">
             Ejecutar Seeders
           </button>
         </div>
         <div class="action-card">
           <h3>Reset Database</h3>
           <p>Borrar todo y reiniciar.</p>
-          <button onclick="confirmReset()" class="btn btn-danger">
+          <button onclick="confirmAction('reset', 'Resetear Todo', true)" class="btn btn-danger">
             Resetear Todo
+          </button>
+        </div>
+        <div class="action-card">
+          <h3>Ver Logs</h3>
+          <p>Consultar logs del sistema.</p>
+          <button onclick="confirmAction('logs', 'Ver Logs')" class="btn btn-warning">
+            Ver Logs
+          </button>
+          <button onclick="downloadExcel()" class="btn btn-success" style="margin-top: 0.5rem;">
+            Descargar Excel
           </button>
         </div>
       </div>
@@ -132,19 +142,31 @@
     </div>
 
     <script>
-      async function runAction(action) {
+      async function runAction(action, method = 'GET', body = null) {
         const outputDiv = document.getElementById("output");
         outputDiv.style.display = "block";
         outputDiv.textContent = `Ejecutando ${action}...\n`;
 
         try {
-          const response = await fetch(`/api/system/${action}`, {
-            method: "GET",
-          });
+          const options = {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+
+          if (body) {
+            options.body = JSON.stringify(body);
+          }
+
+          const response = await fetch(`/api/system/${action}`, options);
           const data = await response.json();
 
           if (data.success) {
             outputDiv.textContent += `[SUCCESS]: ${data.message}\n`;
+            if (data.logs) {
+                outputDiv.textContent += `\n--- LOGS START ---\n${data.logs}\n--- LOGS END ---\n`;
+            }
             if (data.details) {
               outputDiv.textContent += JSON.stringify(data.details, null, 2);
             }
@@ -158,14 +180,61 @@
         }
       }
 
-      function confirmReset() {
-        if (
-          confirm(
-            "¿Estás seguro? Esto borrará TODA la base de datos. Esta acción no se puede deshacer."
-          )
-        ) {
-          runAction("reset");
+      function confirmAction(action, actionName, isDestructive = false) {
+        let message = `¿Estás seguro de que quieres ${actionName}?`;
+        if (isDestructive) {
+            message += "\n\nADVERTENCIA: Esta acción borrará datos y no se puede deshacer.";
         }
+
+        if (confirm(message)) {
+            const token = prompt("Por favor ingresa el TOKEN MAESTRO para confirmar:");
+            if (token) {
+                runAction(action, "POST", { token: token });
+            } else {
+                alert("Acción cancelada: Se requiere el token maestro.");
+            }
+        }
+      }
+
+      function downloadExcel() {
+        const token = prompt("Por favor ingresa el TOKEN MAESTRO para descargar el reporte:");
+        if (!token) {
+            alert("Acción cancelada: Se requiere el token maestro.");
+            return;
+        }
+
+        const outputDiv = document.getElementById("output");
+        outputDiv.style.display = "block";
+        outputDiv.textContent = "Generando reporte Excel...\n";
+
+        fetch('/api/system/logs/export', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: token })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            }
+            return response.json().then(data => {
+                throw new Error(data.message || 'Error desconocido');
+            });
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'system_logs.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            outputDiv.textContent += "[SUCCESS]: Reporte descargado correctamente.\n";
+        })
+        .catch(error => {
+            outputDiv.textContent += `[ERROR]: ${error.message}\n`;
+        });
       }
 
       function logout() {

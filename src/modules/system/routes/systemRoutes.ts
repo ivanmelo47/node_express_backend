@@ -8,10 +8,11 @@ const router = Router();
 router.use(basicAuth);
 
 router.get('/dashboard', SystemController.viewDashboard);
-router.get('/logs', SystemController.getLogs);
+router.post('/logs', SystemController.getLogs);
+router.post('/logs/export', SystemController.exportLogsToExcel);
 
-router.get('/migrate', SystemController.runMigrations);
-router.get('/seed', SystemController.runSeeders);
-router.get('/reset', SystemController.resetDatabase);
+router.post('/migrate', SystemController.runMigrations);
+router.post('/seed', SystemController.runSeeders);
+router.post('/reset', SystemController.resetDatabase);
 
 export default router;
