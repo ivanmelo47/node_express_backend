@@ -5,11 +5,11 @@ class Transporter {
 
   constructor() {
     const encryption = process.env.MAIL_ENCRYPTION;
-    
+
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
-      secure: encryption === 'ssl', 
+      secure: encryption === 'ssl',
       requireTLS: encryption === 'tls',
       auth: {
         user: process.env.MAIL_USERNAME,
@@ -27,7 +27,8 @@ class Transporter {
       from: '"No Reply" <noreply@example.com>',
       to: mailable.to,
       subject: mailable.subject,
-      html: mailable.html
+      html: mailable.html,
+      attachments: mailable.attachments
     };
 
     try {

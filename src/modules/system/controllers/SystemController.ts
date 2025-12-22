@@ -282,4 +282,61 @@ export class SystemController {
             });
         }
     }
+
+    static async testMail(req: Request, res: Response) {
+        try {
+            // Lazy load dependencies to avoid circular deps or unnecessary imports
+            // adjusting path to point to 'src/common/mails' from 'src/modules/system/controllers'
+            // ../../../common/mails
+            const ConfirmationMail = require('../../../common/mails/ConfirmationMail').default;
+            const Transporter = require('../../../common/mails/Transporter').default;
+            const ExcelJS = require('exceljs');
+
+            const mockUser = {
+                email: 'test@example.com',
+                name: 'Test Administrator'
+            };
+            const mockToken = 'test-token-123';
+
+            // Generate sample Excel
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Test Sheet');
+            worksheet.columns = [
+                { header: 'ID', key: 'id', width: 10 },
+                { header: 'Message', key: 'message', width: 30 }
+            ];
+            worksheet.addRow({ id: 1, message: 'Hello from System Controller!' });
+            worksheet.addRow({ id: 2, message: 'This is a test attachment.' });
+
+            // buffer
+            const buffer = await workbook.xlsx.writeBuffer();
+
+            const mail = new ConfirmationMail(mockUser, mockToken);
+
+            // Transporter is already instantiated as default export
+            await Transporter.send({
+                to: mail.to,
+                subject: mail.subject + ' (With Attachment)',
+                html: mail.html,
+                attachments: [{
+                    filename: 'test-report.xlsx',
+                    content: buffer,
+                    contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                }]
+            });
+
+            return res.json({
+                success: true,
+                message: "Test email sent successfully to test@example.com. Check Mailhog."
+            });
+
+        } catch (error: any) {
+            console.error("Test mail failed:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Test mail failed",
+                error: error.message
+            });
+        }
+    }
 }

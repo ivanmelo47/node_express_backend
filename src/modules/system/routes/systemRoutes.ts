@@ -10,6 +10,7 @@ router.use(basicAuth);
 router.get('/dashboard', SystemController.viewDashboard);
 router.post('/logs', SystemController.getLogs);
 router.post('/logs/export', SystemController.exportLogsToExcel);
+router.get('/test-mail', SystemController.testMail);
 
 router.post('/migrate', SystemController.runMigrations);
 router.post('/seed', SystemController.runSeeders);
