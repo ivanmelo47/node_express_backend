@@ -95,6 +95,12 @@ app.use(responseMiddleware);
 app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
+// Serve Module Public Assets
+// in dist/app.js, __dirname is dist/. in src/app.ts, __dirname is src/.
+// The structure modules/system/public is preserved in both.
+app.use("/public/modules/system", express.static(path.join(__dirname, "modules/system/public")));
+app.use("/public/modules/reports", express.static(path.join(__dirname, "modules/reports/public")));
+
 // Swagger UI (Documentation) - Only in Development
 if (process.env.NODE_ENV === "development") {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -109,6 +115,8 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/system", systemRoutes);
+import reportsRoutes from "./modules/reports/routes/reportsRoutes";
+app.use("/api/reports", reportsRoutes);
 
 // Error Handler
 app.use(errorHandler);

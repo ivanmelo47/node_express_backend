@@ -10,7 +10,20 @@ export class SystemController {
     // --- VIEW METHODS ---
 
     static async viewApp(req: Request, res: Response) {
-        res.sendFile(path.join(__dirname, '../views/index.html'));
+        // Serve the centralized Single Page Application shell with dynamic script injection
+        try {
+            const fs = require('fs');
+            const viewPath = path.join(__dirname, '../../../views/spa.html');
+            let html = fs.readFileSync(viewPath, 'utf8');
+
+            // Inject System Module Entry Point
+            html = html.replace('{{MODULE_JS}}', '/public/modules/system/js/app.js');
+
+            res.send(html);
+        } catch (error) {
+            console.error("Error serving view:", error);
+            res.status(500).send("Error loading application view");
+        }
     }
 
     // --- HELPER METHODS ---

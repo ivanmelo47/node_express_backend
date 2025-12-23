@@ -25,8 +25,7 @@ router.post('/files/create-folder', SystemFileController.createFolder);
 router.delete('/files/delete', SystemFileController.deleteItem);
 
 // View Routes (SPA) - Catch-all routes must be last
-router.get('/dashboard', SystemController.viewApp);
-router.get('/files', SystemController.viewApp);
-router.get(/\/files\/.*/, SystemController.viewApp); // Regex wildcard for Express 5 stability
+// Matches any GET request not handled by previous API routes (dashboard, files, etc.)
+router.get(/.*/, SystemController.viewApp);
 
 export default router;

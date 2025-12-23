@@ -36,7 +36,11 @@ COPY --from=builder /app/src/database/migrations ./dist/database/migrations
 COPY --from=builder /app/src/database/seeders ./dist/database/seeders
 
 # Copy system views (HTML files)
-COPY --from=builder /app/src/modules/system/views ./dist/modules/system/views
+# OLD: COPY --from=builder /app/src/modules/system/views ./dist/modules/system/views
+# NEW: Copy global views and module assets
+COPY --from=builder /app/src/views ./dist/views
+COPY --from=builder /app/src/modules/system/public ./dist/modules/system/public
+COPY --from=builder /app/src/modules/reports/public ./dist/modules/reports/public
 
 # Copy public static assets
 COPY --from=builder /app/public ./public
