@@ -9,8 +9,8 @@ export class SystemController {
 
     // --- VIEW METHODS ---
 
-    static async viewDashboard(req: Request, res: Response) {
-        res.sendFile(path.join(__dirname, '../views/dashboard.html'));
+    static async viewApp(req: Request, res: Response) {
+        res.sendFile(path.join(__dirname, '../views/index.html'));
     }
 
     // --- HELPER METHODS ---
