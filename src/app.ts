@@ -93,6 +93,7 @@ app.use(responseMiddleware);
 
 // Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+app.use("/public", express.static(path.join(__dirname, "../public")));
 
 // Swagger UI (Documentation) - Only in Development
 if (process.env.NODE_ENV === "development") {

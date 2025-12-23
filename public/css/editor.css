@@ -1,0 +1,157 @@
+/* Code Editor Specific Styles */
+:root {
+    /* Editor Colors (Tokyo Night) */
+    --editor-bg: #1a1b26;
+    --editor-fg: #a9b1d6;
+    --gutter-bg: #16161e;
+    --gutter-fg: #414868;
+    --token-keyword: #bb9af7;
+    --token-string: #9ece6a;
+    --token-comment: #565f89;
+    --token-function: #7aa2f7;
+    --token-number: #ff9e64;
+    --token-class: #e0af68;
+    --token-operator: #89ddff;
+    
+    --editor-font-size: 14px;
+    --editor-line-height: 1.6;
+    --editor-font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+/* Monokai Theme */
+.theme-monokai {
+    --editor-bg: #272822;
+    --editor-fg: #f8f8f2;
+    --gutter-bg: #272822;
+    --gutter-fg: #90908a;
+    --accent: #a6e22e;
+    
+    --token-keyword: #f92672;
+    --token-string: #e6db74;
+    --token-comment: #75715e;
+    --token-function: #a6e22e;
+    --token-number: #ae81ff;
+    --token-class: #66d9ef;
+    --token-operator: #f92672;
+}
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+.modal.active { display: flex; }
+
+.modal-content {
+    background-color: var(--bg-darker);
+    width: 90%;
+    height: 90%;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 0.8rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-panel);
+}
+
+/* Editor Container */
+.editor-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+    background-color: var(--editor-bg);
+    overflow: hidden;
+    font-size: var(--editor-font-size);
+    font-family: var(--editor-font-family);
+}
+
+/* Gutter */
+.editor-gutter {
+    width: 50px;
+    background-color: var(--gutter-bg);
+    color: var(--gutter-fg);
+    text-align: right;
+    padding: 10px 10px 10px 0;
+    border-right: 1px solid var(--border);
+    line-height: var(--editor-line-height);
+    font-family: inherit;
+    overflow: hidden; /* Scroll sync commanded by textarea */
+    user-select: none;
+    box-sizing: border-box;
+    white-space: pre;
+}
+
+/* Editor Area (Overlay System) */
+.editor-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden; /* Important: Scroll is handled by the textarea */
+}
+
+/* Common styles for both layers */
+.editor-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    margin: 0;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: var(--editor-line-height);
+    tab-size: 4;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+/* Highlighting Layer (Bottom) */
+#editor-highlight {
+    color: var(--editor-fg);
+    pointer-events: none; /* Let clicks pass through */
+    z-index: 1;
+    overflow: hidden;
+}
+
+#editor-code {
+    font-family: inherit; /* Ensure code block inherits font */
+}
+
+/* Input Layer (Top) - MASTER SCROLLER */
+#file-editor {
+    color: transparent; /* Text is invisible */
+    caret-color: var(--text-primary); /* Cursor remains visible */
+    z-index: 2;
+    resize: none;
+    outline: none;
+    overflow: auto; /* This enables native mouse wheel scroll */
+}
+
+/* Selection Color */
+#file-editor::selection {
+    background: rgba(122, 162, 247, 0.3);
+    color: transparent;
+}
+
+/* Syntax Tokens */
+.token-keyword { color: var(--token-keyword); font-weight: bold; }
+.token-string { color: var(--token-string); }
+.token-comment { color: var(--token-comment); font-style: italic; }
+.token-function { color: var(--token-function); }
+.token-number { color: var(--token-number); }
+.token-class { color: var(--token-class); }
+.token-operator { color: var(--token-operator); }
+
+/* Toolbar */
+.editor-toolbar { display: flex; gap: 0.5rem; align-items: center; }
+.tool-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.tool-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
