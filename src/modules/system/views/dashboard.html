@@ -105,7 +105,7 @@
     <div class="main">
         <div class="toolbar">
             <div style="font-weight: bold; font-size: 1.1rem;">Panel de Control</div>
-            <button class="btn btn-logout" onclick="alert('Funcionalidad de Logout pendiente')">
+            <button class="btn btn-logout" onclick="window.location.href = window.location.protocol + '//logout:logout@' + window.location.host + '/api/system'">
                 <svg class="icon"><use href="#icon-logout"></use></svg> Cerrar Sesión
             </button>
         </div>
@@ -145,6 +145,27 @@
                     </button>
                 </div>
 
+                <!-- System Logs -->
+                <div class="card">
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div class="card-icon" style="color: var(--text-primary); background-color: rgba(169, 177, 214, 0.1);">
+                            <svg class="icon"><use href="#icon-terminal"></use></svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="card-title">Logs del Sistema</div>
+                            <div class="card-desc">Visualiza o descarga el historial de actividades del sistema.</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; width: 100%;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="viewLogs()">
+                            Ver Logs
+                        </button>
+                        <button class="btn btn-success" style="flex: 1;" onclick="exportLogs()">
+                            Excel
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Reset DB -->
                 <div class="card">
                     <div style="display: flex; gap: 1rem; align-items: flex-start;">
@@ -178,7 +199,12 @@
                 </div>
             </div>
 
-            <h3 style="margin-bottom: 1rem; color: var(--text-secondary);">Salida de Consola</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--text-secondary); margin: 0;">Salida de Consola</h3>
+                <button class="btn btn-secondary" onclick="clearLog()" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">
+                    Limpiar
+                </button>
+            </div>
             <div id="output" class="console-output">Esperando acciones...</div>
         </div>
     </div>
@@ -196,15 +222,25 @@
         }
 
         async function runAction(action) {
+            const token = prompt("Introduce el SYSTEM_MASTER_TOKEN para confirmar esta acción:");
+            if (!token) return;
+
             log(`Iniciando acción: ${action}...`, 'info');
             
             try {
-                const res = await fetch(`/api/system/${action}`, { method: 'POST' });
+                const res = await fetch(`/api/system/${action}`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token }) 
+                });
                 const data = await res.json();
                 
                 if (data.success) {
                     log(data.message, 'success');
                     if (data.output) log(data.output, 'info');
+                    if (data.details && typeof data.details === 'object') {
+                         log(JSON.stringify(data.details, null, 2), 'info');
+                    }
                 } else {
                     log('Error: ' + data.message, 'error');
                 }
@@ -213,10 +249,71 @@
             }
         }
 
+        async function viewLogs() {
+            const token = prompt("Introduce el SYSTEM_MASTER_TOKEN para ver los logs:");
+            if (!token) return;
+
+            log('Obteniendo logs del sistema...', 'info');
+            try {
+                const res = await fetch('/api/system/logs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    log('Logs obtenidos correctamente:', 'success');
+                    const output = document.getElementById('output');
+                    output.innerHTML = data.logs || 'Sin logs.';
+                    output.scrollTop = output.scrollHeight;
+                } else {
+                    log('Error al obtener logs: ' + data.message, 'error');
+                }
+            } catch (error) {
+                 log('Error de conexión: ' + error.message, 'error');
+            }
+        }
+
+        async function exportLogs() {
+            const token = prompt("Introduce el SYSTEM_MASTER_TOKEN para descargar los logs:");
+            if (!token) return;
+
+             log('Generando exportación de Excel...', 'info');
+             try {
+                const res = await fetch('/api/system/logs/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                });
+
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'system_logs.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    log('Descarga iniciada.', 'success');
+                } else {
+                    const data = await res.json();
+                    log('Error al exportar: ' + (data.message || res.statusText), 'error');
+                }
+             } catch (error) {
+                 log('Error de conexión: ' + error.message, 'error');
+             }
+        }
+
         function confirmReset() {
             if (confirm('¿ESTÁS SEGURO? Esto borrará TDOOS los datos.')) {
-                runAction('reset-db');
+                // The token prompt is handled inside runAction
+                runAction('reset');
             }
+        }
+
+        function clearLog() {
+            document.getElementById('output').innerHTML = 'Esperando acciones...';
         }
     </script>
 </body>

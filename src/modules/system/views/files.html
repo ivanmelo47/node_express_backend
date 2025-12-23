@@ -38,12 +38,21 @@
     </div>
 
     <div class="main">
+        <!-- Global Header -->
         <div class="toolbar">
-            <div id="breadcrumb" class="breadcrumb">
+            <div style="font-weight: bold; font-size: 1.1rem;">System File Manager</div>
+            <button class="btn btn-logout" onclick="window.location.href = window.location.protocol + '//logout:logout@' + window.location.host + '/api/system'">
+                <svg class="icon"><use href="#icon-logout"></use></svg> Cerrar Sesión
+            </button>
+        </div>
+
+        <!-- File Actions Toolbar -->
+        <div style="padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); background-color: rgba(26, 27, 38, 0.5); display: flex; align-items: center; justify-content: space-between;">
+            <div id="breadcrumb" class="breadcrumb" style="flex: 1;">
                 <span class="breadcrumb-item" onclick="loadPath('')">root</span>
             </div>
             <div style="display: flex; gap: 0.8rem;">
-                <button class="btn btn-secondary" onclick="refreshCurrentPath()">
+                <button class="btn btn-secondary" onclick="refreshCurrentPath()" title="Refrescar">
                     <svg class="icon"><use href="#icon-refresh"></use></svg>
                 </button>
                 <button class="btn btn-primary" onclick="createFolderPrompt()">

@@ -19,7 +19,7 @@ const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
-    
+
     // Sync models with database
     // force: false ensures we don't drop tables on restart
     // alter: true updates tables if models change (use with caution in production)
@@ -31,7 +31,7 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error('Unable to connect to the database:', error);
-    process.exit(1); 
+    process.exit(1);
   }
 };
 

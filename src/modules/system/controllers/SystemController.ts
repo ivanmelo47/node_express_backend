@@ -285,6 +285,17 @@ export class SystemController {
 
     static async testMail(req: Request, res: Response) {
         try {
+            const { token } = req.body;
+            const masterToken = process.env.SYSTEM_MASTER_TOKEN;
+
+            if (!masterToken) {
+                return res.status(500).json({ success: false, message: 'Server configuration error: Missing master token' });
+            }
+
+            if (token !== masterToken) {
+                return res.status(403).json({ success: false, message: 'Invalid Master Token' });
+            }
+
             // Lazy load dependencies to avoid circular deps or unnecessary imports
             // adjusting path to point to 'src/common/mails' from 'src/modules/system/controllers'
             // ../../../common/mails
