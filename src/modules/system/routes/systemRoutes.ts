@@ -1,9 +1,17 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { SystemController } from '../controllers/SystemController';
 import { SystemFileController } from '../controllers/SystemFileController';
 import { basicAuth } from '../../../common/middlewares/basicAuth';
 
 const router = Router();
+
+// Feature Flag: Check if System Module is enabled
+router.use((req: Request, res: Response, next: NextFunction) => {
+    if (process.env.SYSTEM_MODULE_ENABLED !== 'true') {
+        return res.status(404).send('Not Found');
+    }
+    next();
+});
 
 // Apply Basic Auth to all routes
 router.use(basicAuth);
