@@ -2,3 +2,12 @@ node_modules
 .env
 database.sqlite
 logs
+
+storage/private/profiles/*.jpg
+storage/private/profiles/*.png
+storage/private/profiles/*.webp
+
+public/uploads/profiles/*.jpg
+public/uploads/profiles/*.png
+public/uploads/profiles/*.webp
+

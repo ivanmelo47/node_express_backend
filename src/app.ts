@@ -117,6 +117,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/system", systemRoutes);
 import reportsRoutes from "./modules/reports/routes/reportsRoutes";
 app.use("/api/reports", reportsRoutes);
+import storageRoutes from "./modules/storage/routes/storageRoutes";
+app.use("/api/storage", storageRoutes);
 
 // Error Handler
 app.use(errorHandler);

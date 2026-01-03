@@ -32,6 +32,7 @@ services:
     volumes:
       - ./logs:/app/logs
       - ./public:/app/public
+      - ./storage:/app/storage
     networks:
       - app-network
     restart: unless-stopped

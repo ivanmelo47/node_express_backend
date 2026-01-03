@@ -9,9 +9,9 @@ class UserResource extends BaseResource {
       email: this.resource.email,
       image: this.resource.image,
       images: this.resource.image ? {
-        jpg: `/uploads/profiles/${this.resource.image}.jpg`,
-        png: `/uploads/profiles/${this.resource.image}.png`,
-        webp: `/uploads/profiles/${this.resource.image}.webp`,
+        jpg: `/api/storage/private/profiles/${this.resource.image}.jpg`,
+        png: `/api/storage/private/profiles/${this.resource.image}.png`,
+        webp: `/api/storage/private/profiles/${this.resource.image}.webp`,
       } : null,
       role: this.resource.Role ? new RoleResource(this.resource.Role).resolve() : null,
       // Add other fields as needed, excluding sensitive ones like password

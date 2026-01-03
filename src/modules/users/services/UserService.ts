@@ -25,7 +25,7 @@ class UserService {
       await db.rollback(t);
       // Limpieza: si se subió una imagen pero la BD falló, eliminar los archivos de imagen
       if (data.image) {
-        const uploadPath = path.join(__dirname, '../../../../public/uploads/profiles');
+        const uploadPath = path.join(__dirname, '../../../../storage/private/profiles');
         ImageService.deleteProfileImage(uploadPath, data.image);
       }
       throw error;
@@ -65,7 +65,7 @@ class UserService {
    */
   static async updateUser(uuid: string, dataOrReq: any, res: any = null) {
     const t = await db.init();
-    const uploadPath = path.join(__dirname, '../../../../public/uploads/profiles');
+    const uploadPath = path.join(__dirname, '../../../../storage/private/profiles');
     let data: any = {};
     let newImageName = null;
 
