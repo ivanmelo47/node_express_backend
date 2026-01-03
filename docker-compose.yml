@@ -26,6 +26,7 @@ services:
       - SYSTEM_PASSWORD=${SYSTEM_PASSWORD}
       - SYSTEM_MASTER_TOKEN=${SYSTEM_MASTER_TOKEN}
       - SYSTEM_MODULE_ENABLED=${SYSTEM_MODULE_ENABLED}
+      - ENABLE_SWAGGER=${ENABLE_SWAGGER}
     depends_on:
       - db
     volumes:

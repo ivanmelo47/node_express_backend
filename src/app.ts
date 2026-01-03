@@ -101,8 +101,8 @@ app.use("/public", express.static(path.join(__dirname, "../public")));
 app.use("/public/modules/system", express.static(path.join(__dirname, "modules/system/public")));
 app.use("/public/modules/reports", express.static(path.join(__dirname, "modules/reports/public")));
 
-// Swagger UI (Documentation) - Only in Development
-if (process.env.NODE_ENV === "development") {
+// Swagger UI (Documentation) - Only in Development or if explicitly enabled
+if (process.env.NODE_ENV === "development" || process.env.ENABLE_SWAGGER === "true") {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   console.log("Swagger UI available at http://localhost:4000/docs");
 }

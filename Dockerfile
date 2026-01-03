@@ -42,6 +42,9 @@ COPY --from=builder /app/src/views ./dist/views
 COPY --from=builder /app/src/modules/system/public ./dist/modules/system/public
 COPY --from=builder /app/src/modules/reports/public ./dist/modules/reports/public
 
+# Copy entire src directory to allow Swagger to read .ts comments in production
+COPY --from=builder /app/src ./src
+
 # Copy public static assets
 COPY --from=builder /app/public ./public
 
