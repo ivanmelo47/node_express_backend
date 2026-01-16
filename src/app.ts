@@ -80,7 +80,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 app.use(morgan("dev"));
 
 // Rate Limiting
-app.use("/api", globalLimiter);
+app.use("/api/v1", globalLimiter);
 
 // Body Parser
 app.use(express.json()); // Limit body size if needed: express.json({ limit: '10kb' })
@@ -112,13 +112,13 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to the API Mijo" });
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/system", systemRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/system", systemRoutes);
 import reportsRoutes from "./modules/reports/routes/reportsRoutes";
-app.use("/api/reports", reportsRoutes);
+app.use("/api/v1/reports", reportsRoutes);
 import storageRoutes from "./modules/storage/routes/storageRoutes";
-app.use("/api/storage", storageRoutes);
+app.use("/api/v1/storage", storageRoutes);
 
 // Error Handler
 app.use(errorHandler);

@@ -80,13 +80,13 @@ export function renderFiles() {
 export async function loadPath(path) {
     state.currentPath = path; // Update global state
     updateBreadcrumb();
-    
+
     const grid = document.getElementById('file-grid');
     if (!grid) return;
     grid.innerHTML = '<div style="color: var(--text-secondary);">Cargando...</div>';
 
     try {
-        const res = await fetch(`/api/system/files/list?path=${encodeURIComponent(path)}`);
+        const res = await fetch(`/api/v1/system/files/list?path=${encodeURIComponent(path)}`);
         const data = await res.json();
 
         if (data.success) {
@@ -117,7 +117,7 @@ function renderGrid(items) {
         // We'll attach the item to the function via a closure or pass unique ID, but we can't pass complex objects in onclick string.
         // We will store items in `currentItems` and pass index.
         const index = items.indexOf(item);
-        
+
         el.oncontextmenu = (e) => showContextMenu(e, index);
         el.onclick = () => handleItemClick(index);
 
@@ -155,12 +155,12 @@ function updateBreadcrumb() {
     const container = document.getElementById('breadcrumb');
     if (!container) return;
     container.innerHTML = '<span class="breadcrumb-item" onclick="window.files.loadPath(\'\')">root</span>';
-    
+
     if (!state.currentPath) return;
 
     const parts = state.currentPath.split('/');
     let buildPath = '';
-    
+
     parts.forEach(part => {
         if (!part) return;
         buildPath += (buildPath ? '/' : '') + part;
@@ -179,16 +179,16 @@ async function openEditor(item) {
     const textarea = document.getElementById('file-editor');
     const highlight = document.getElementById('editor-code');
     const title = document.getElementById('edit-filename');
-    
+
     title.textContent = item.name;
     textarea.value = 'Cargando...';
     highlight.innerHTML = '';
     modal.classList.add('active');
 
     try {
-        const res = await fetch(`/api/system/files/read?path=${encodeURIComponent(item.path)}`);
+        const res = await fetch(`/api/v1/system/files/read?path=${encodeURIComponent(item.path)}`);
         const data = await res.json();
-        
+
         if (data.success) {
             textarea.value = data.content;
             updateEditor();
@@ -294,12 +294,12 @@ async function saveFile() {
     const content = document.getElementById('file-editor').value;
     const btn = document.querySelector('#edit-modal .btn-primary');
     const originalText = btn.innerHTML;
-    
+
     btn.innerHTML = 'Guardando...';
     btn.disabled = true;
 
     try {
-        const res = await fetch('/api/system/files/save', {
+        const res = await fetch('/api/v1/system/files/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ path: selectedItem.path, content: content })
@@ -330,7 +330,7 @@ async function deleteSelectedItem() {
     if (!confirm(`¿Eliminar ${selectedItem.name}? Esta acción no se puede deshacer.`)) return;
 
     try {
-        const res = await fetch(`/api/system/files/delete?path=${encodeURIComponent(selectedItem.path)}`, {
+        const res = await fetch(`/api/v1/system/files/delete?path=${encodeURIComponent(selectedItem.path)}`, {
             method: 'DELETE'
         });
         const data = await res.json();
@@ -350,7 +350,7 @@ async function createFolderPrompt() {
     if (!name) return;
 
     try {
-        const res = await fetch('/api/system/files/create-folder', {
+        const res = await fetch('/api/v1/system/files/create-folder', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ path: state.currentPath, name: name })
@@ -385,7 +385,7 @@ export function setupFilesEvents() {
         const menu = document.getElementById('context-menu');
         if (menu) menu.style.display = 'none';
     });
-    
+
     window.files = {
         loadPath,
         createFolderPrompt,

@@ -13,7 +13,7 @@ class Router {
         // Render Layout once
         this.app.innerHTML = renderLayout();
         setupLayoutEvents();
-        
+
         // Handle Back/Forward
         window.onpopstate = () => this.handleRoute();
 
@@ -25,18 +25,18 @@ class Router {
         // Simple hash routing for now to avoid server rewrites complexity for specific sub-paths if not configured
         // But since we control the server, we can mostly trust it.
         // Let's use simple string logic for now.
-        
+
         state.currentView = view;
-        
+
         if (view === 'files' && path !== null) {
             state.currentPath = path;
         }
 
         this.renderView();
         updateActiveNav(view);
-        
+
         // Update URL just for show (optional if we don't fully rely on history api for deep linking yet)
-        history.pushState({}, '', `/api/system/${view}`);
+        history.pushState({}, '', `/api/v1/system/${view}`);
         // For now, let's keep it simple.
     }
 

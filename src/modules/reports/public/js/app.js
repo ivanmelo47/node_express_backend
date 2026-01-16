@@ -11,14 +11,14 @@ class ReportsApp {
         // Reuse System Layout (mix and match!)
         this.app.innerHTML = renderLayout();
         setupLayoutEvents();
-        
+
         // Update Brand or Menu to reflect this is Reports
         const brand = document.querySelector('.logo .nav-text');
         if (brand) brand.textContent = 'SYS.REPORTS';
 
         // Render content
         this.renderOverview();
-        
+
         // Mark active nav (mocking it since we don't have a real reports menu yet)
         // In a real app, layout would be more dynamic or passed as config
     }
@@ -46,11 +46,11 @@ class ReportsApp {
     }
     navigate(view) {
         updateActiveNav(view);
-        
+
         if (view === 'dashboard' || view === 'files') {
             alert('Navegando al módulo System... (Simulación)');
             // In a real app, this would redirect: window.location.href = '/api/system/dashboard';
-            window.location.href = `/api/system/${view}`;
+            window.location.href = `/api/v1/system/${view}`;
         }
     }
 }
