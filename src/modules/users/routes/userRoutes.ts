@@ -7,6 +7,7 @@ import { updateProfileRules } from "@/modules/users/rules/userProfileRules";
 import authMiddleware from "@/modules/auth/middlewares/authMiddleware";
 import roleMiddleware from "@/common/middlewares/roleMiddleware";
 import abilityMiddleware from "@/common/middlewares/abilityMiddleware";
+import { cache } from "@/common/middlewares/cache";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get("/abilities", authMiddleware, roleMiddleware(["master"]), userControl
 router.get("/profile/me", authMiddleware, userProfileController.getMyProfile);
 router.put("/profile/me", authMiddleware, updateProfileRules, userProfileController.updateMyProfile);
 
-router.get("/", authMiddleware, abilityMiddleware("read"), userController.getUsers);
+router.get("/", authMiddleware, abilityMiddleware("read"), cache(60), userController.getUsers);
 router.get("/:uuid", authMiddleware, abilityMiddleware("read"), userController.getUserByUuid);
 
 // Admin only routes (also checking for specific abilities for granularity)

@@ -21,6 +21,9 @@ services:
       - MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_ENABLED=${CACHE_ENABLED:-false}
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Mexico_City}
       - SYSTEM_USER=${SYSTEM_USER}
       - SYSTEM_PASSWORD=${SYSTEM_PASSWORD}
@@ -37,15 +40,24 @@ services:
       - app-network
     restart: unless-stopped
 
+  redis:
+    image: redis:alpine
+    container_name: node_express_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: unless-stopped
+
   db:
     image: mariadb:10.6
     container_name: node_express_db
     environment:
-      - MARIADB_ROOT_PASSWORD=${DB_PASSWORD:-root}
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root}
       - MARIADB_DATABASE=${DB_DATABASE:-node_express}
       # If you want a specific non-root user, uncomment these:
-      # - MARIADB_USER=${DB_USERNAME:-user}
-      # - MARIADB_PASSWORD=${DB_PASSWORD:-password}
+      - MARIADB_USER=${DB_USERNAME:-user}
+      - MARIADB_PASSWORD=${DB_PASSWORD:-password}
     volumes:
       - db_data:/var/lib/mysql
     networks:

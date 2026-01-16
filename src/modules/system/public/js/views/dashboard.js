@@ -105,7 +105,7 @@ export function renderDashboard() {
 function log(message, type = 'info') {
     const output = document.getElementById('output');
     if (!output) return;
-    
+
     const entry = document.createElement('div');
     entry.className = `log-entry log-${type}`;
     const time = new Date().toLocaleTimeString();
@@ -120,20 +120,20 @@ async function runAction(action) {
     if (!token) return;
 
     log(`Iniciando acción: ${action}...`, 'info');
-    
+
     try {
-        const res = await fetch(`/api/system/${action}`, { 
+        const res = await fetch(`/api/v1/system/${action}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: token }) 
+            body: JSON.stringify({ token: token })
         });
         const data = await res.json();
-        
+
         if (data.success) {
             log(data.message, 'success');
             if (data.output) log(data.output, 'info');
             if (data.details && typeof data.details === 'object') {
-                 log(JSON.stringify(data.details, null, 2), 'info');
+                log(JSON.stringify(data.details, null, 2), 'info');
             }
         } else {
             log('Error: ' + data.message, 'error');
@@ -149,7 +149,7 @@ async function viewLogs() {
 
     log('Obteniendo logs del sistema...', 'info');
     try {
-        const res = await fetch('/api/system/logs', {
+        const res = await fetch('/api/v1/system/logs', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: token })
@@ -164,7 +164,7 @@ async function viewLogs() {
             log('Error al obtener logs: ' + data.message, 'error');
         }
     } catch (error) {
-         log('Error de conexión: ' + error.message, 'error');
+        log('Error de conexión: ' + error.message, 'error');
     }
 }
 
@@ -172,9 +172,9 @@ async function exportLogs() {
     const token = prompt("Introduce el SYSTEM_MASTER_TOKEN para descargar los logs:");
     if (!token) return;
 
-     log('Generando exportación de Excel...', 'info');
-     try {
-        const res = await fetch('/api/system/logs/export', {
+    log('Generando exportación de Excel...', 'info');
+    try {
+        const res = await fetch('/api/v1/system/logs/export', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: token })
@@ -194,9 +194,9 @@ async function exportLogs() {
             const data = await res.json();
             log('Error al exportar: ' + (data.message || res.statusText), 'error');
         }
-     } catch (error) {
-         log('Error de conexión: ' + error.message, 'error');
-     }
+    } catch (error) {
+        log('Error de conexión: ' + error.message, 'error');
+    }
 }
 
 function confirmReset() {

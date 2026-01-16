@@ -11,3 +11,5 @@ public/uploads/profiles/*.jpg
 public/uploads/profiles/*.png
 public/uploads/profiles/*.webp
 
+dist/
+
